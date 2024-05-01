@@ -22,7 +22,9 @@ public class ConvolutionLayer {
 
     private Dimension outputDimension;
 
-    private List<Matrix3D> kernels;
+    private Matrix3D[] kernels;
+
+    private double[] biases;
 
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride) {
         if (kernelSize <= 0) {
@@ -32,7 +34,8 @@ public class ConvolutionLayer {
             throw new NetworkConfigException("Kernels count cannot be 0 or less!");
         }
         this.outputDimension = new Dimension(kernelsCount, 0, 0, stride, kernelSize, kernelSize);
-        this.kernels = new ArrayList<>(kernelsCount);
+        this.kernels = new Matrix3D[kernelsCount];
+        this.biases = new double[kernelsCount];
     }
 
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride, Dimension inputDimension) {
@@ -52,16 +55,17 @@ public class ConvolutionLayer {
         this.outputDimension.setHeightKernel(kernelSize);
         this.outputDimension.setWidthKernel(kernelSize);
         this.outputDimension.setStride(stride);
-        this.kernels = new ArrayList<>(kernelsCount);
+        this.kernels = new Matrix3D[kernelsCount];
 //        for (int i = 0; i < kernelsCount; i++) {
 //            kernels.set(i, MatrixUtils.fillRandom(new Matrix3D(this.outputDimension.getChannel(),
 //                                                                    kernelSize,
 //                                                                    kernelSize)));
 //        }
         for (int i = 0; i < kernelsCount; i++) {
-            kernels.add(MatrixUtils.fillRandom(new Matrix3D(this.outputDimension.getChannel(),
+            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.outputDimension.getChannel(),
                                                                     kernelSize,
-                                                                    kernelSize)));
+                                                                    kernelSize));
+            biases[i] = 2 * Math.random() - 1;
         }
     }
 
@@ -92,21 +96,19 @@ public class ConvolutionLayer {
 //                                                                            this.outputDimension.getWidthKernel())));
 //        }
         for (int i = 0; i < this.outputDimension.getChannel(); i++) {
-            kernels.add(MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
+            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
                                                                         this.outputDimension.getHeightKernel(),
-                                                                        this.outputDimension.getWidthKernel())));
+                                                                        this.outputDimension.getWidthKernel()));
+            biases[i] = 2 * Math.random() - 1;
         }
 
     }
 
-    public Matrix3D propogateForward(Matrix3D some) {
-        Matrix3D result = new Matrix3D(outputDimension.getChannel(), outputDimension.getHeightTens(), outputDimension.getWidthTens());
-
-        for (int i = 0; i < kernels.size(); i++) {
-            Matrix3D wrapped = ConvolutionUtils.wrap(some, kernels.get(0), outputDimension.getStride());
-            result.setMatrix2d(array, i);
-        }
-        return some;
+    public Matrix3D propogateForward(Matrix3D inputTensor) {
+        preActivation = inputTensor.copy();
+        Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
+        postActivation = result.copy();
+        return result;
     }
 
 

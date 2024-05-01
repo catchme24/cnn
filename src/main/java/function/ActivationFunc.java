@@ -1,6 +1,7 @@
 package function;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import util.Matrix3D;
 
 public interface ActivationFunc {
 
@@ -20,6 +21,30 @@ public interface ActivationFunc {
             result.setEntry(i, 0, calculated);
         }
         return result;
+    };
+
+    default Matrix3D calculate(Matrix3D x) {
+        double[][][] tensor = x.getMatrix3d();
+        for (int i = 0; i < tensor.length; i++) {
+            for (int j = 0; j < tensor[0].length; j++) {
+                for (int k = 0; k < tensor[0][0].length; k++) {
+                    tensor[i][j][k] = calculate(tensor[i][j][k]);
+                }
+            }
+        }
+        return new Matrix3D(tensor);
+    };
+
+    default Matrix3D calculateDerivation(Matrix3D x) {
+        double[][][] tensor = x.getMatrix3d();
+        for (int i = 0; i < tensor.length; i++) {
+            for (int j = 0; j < tensor[0].length; j++) {
+                for (int k = 0; k < tensor[0][0].length; k++) {
+                    tensor[i][j][k] = calculateDerivation(tensor[i][j][k]);
+                }
+            }
+        }
+        return new Matrix3D(tensor);
     };
 
     double calculate(double x);

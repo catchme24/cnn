@@ -41,6 +41,18 @@ public class Matrix3D {
         matrix3d[depth] = matrix;
     }
 
+    public Matrix3D copy(){
+        double[][][] copy = new double[matrix3d.length][matrix3d[0].length][matrix3d[0][0].length];
+        for (int i = 0; i < copy.length; i++) {
+            for (int j = 0; j < copy[0].length; j++) {
+                for (int k = 0; k < copy[0][0].length; k++) {
+                    copy[i][j][k] = matrix3d[i][j][k];
+                }
+            }
+        }
+        return new Matrix3D(copy);
+    }
+
     private double[][][] initMatrix(int depth, int height, int width) {
         return new double[depth][height][width];
     }

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @Slf4j
 public class MatrixUtils {
@@ -94,6 +95,16 @@ public class MatrixUtils {
             }
         }
         return matrix;
+    }
+    public static void printMatrix3D(Matrix3D matrix) {
+        double[][][] array3D = matrix.getMatrix3d();
+        for(int i = 0; i < array3D.length; i++) {
+            for(int j = 0; j < array3D[0].length; j++) {
+                System.out.println(Arrays.toString(array3D[i][j]));
+            }
+            System.out.println("----------------------------------------");
+        }
+
     }
 
     public static RealMatrix createInstance(int row, int column) {
