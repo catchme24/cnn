@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -155,5 +157,32 @@ public class MatrixUtils {
         RealMatrix matrix = worker.createMatrix(classesCount, 1);
         matrix.setEntry(Double.valueOf(classNumber).intValue() - 1, 0, 1.0);
         return matrix;
+    }
+
+    public static Matrix3D getDataFrame(BufferedImage image) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+
+        double[][] red = new double[h][w];
+        double[][] green = new double[h][w];
+        double[][] blue = new double[h][w];
+
+        Matrix3D result = new Matrix3D(3, h, w);
+
+        int[] dataBuffInt = image.getRGB(0, 0, w, h, null, 0, w);
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                Color c = new Color(dataBuffInt[i * w + j]);
+                red[i][j] =  c.getRed() / 255.0;
+                green[i][j] = c.getGreen() / 255.0;
+                blue[i][j] = c.getBlue() / 255.0;
+            }
+        }
+        result.setMatrix2d(red, 0);
+        result.setMatrix2d(green, 1);
+        result.setMatrix2d(blue, 2);
+
+        return result;
     }
 }

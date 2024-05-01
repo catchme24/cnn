@@ -1,6 +1,18 @@
 package network.layer;
 
+import com.sun.tools.javac.Main;
+import function.ReLu;
 import org.junit.jupiter.api.Test;
+import util.Matrix3D;
+import util.MatrixUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class ConvolutionLayerTest {
 
@@ -28,5 +40,26 @@ public class ConvolutionLayerTest {
         layer2.getSize();
         layer3.getSize();
         layer4.getSize();
+    }
+
+    @Test
+    public void testIsolatedConvLayer() throws IOException {
+        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+
+        int w = image.getWidth();
+        int h = image.getHeight();
+
+        System.out.println(w + " " + h);
+
+        Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        ConvolutionLayer layer1 = new ConvolutionLayer(10, 4, 2, imageDimension);
+
+        Matrix3D result1 = layer1.propogateForward(dataFrame);
+
+        System.out.println("---------AFTER CONNECT FULL--------");
+        MatrixUtils.printMatrix3D(result1);
     }
 }

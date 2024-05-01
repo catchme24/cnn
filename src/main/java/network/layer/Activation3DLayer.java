@@ -2,6 +2,7 @@ package network.layer;
 
 import function.ActivationFunc;
 import function.Softmax;
+import jdk.jfr.Percentage;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -9,13 +10,13 @@ import util.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j
-public class Activation3DLayer {
+public class Activation3DLayer implements Layer3D {
 
     private Matrix3D preActivation;
 
     private Matrix3D postActivation;
 
-    private ConvolutionLayer prev;
+    private Layer3D prev;
 
     private ActivationFunc activationFunc;
 
@@ -28,7 +29,8 @@ public class Activation3DLayer {
         this.activationFunc = func;
     }
 
-    public void setPrevious(ConvolutionLayer prev) {
+    @Override
+    public void setPrevious(Layer3D prev) {
         if (prev == null) {
             throw new NetworkConfigException("Prev layer for activation layer cannot be null!");
         }
@@ -46,24 +48,27 @@ public class Activation3DLayer {
 
     }
 
+    @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
-        log.debug("Activation3DLayer layer: Start propogateForward with:");
-        MatrixUtils.printMatrix3D(inputTensor);
+//        log.debug("Activation3DLayer layer: Start propogateForward with:");
+//        MatrixUtils.printMatrix3D(inputTensor);
 
         preActivation = inputTensor.copy();
         //Высчитывает сигнал с оффсетом, если он установлен
         Matrix3D outputTensor = activationFunc.calculate(inputTensor);
 //        postActivation = outputTensor;
-        log.debug("Activation3DLayer layer: End propogateForward with:");
-        MatrixUtils.printMatrix3D(outputTensor);
+//        log.debug("Activation3DLayer layer: End propogateForward with:");
+//        MatrixUtils.printMatrix3D(outputTensor);
         return outputTensor;
     }
 
+    @Override
     public void correctWeights(double learnRate) {
 
     }
 
-    public RealMatrix propogateBackward(RealMatrix errorVector) {
+    @Override
+    public Matrix3D propogateBackward(Matrix3D errorVector) {
 
 //        log.debug("Activation3DLayer layer: Start propogateBackward with error vector:");
 //        MatrixUtils.printMatrix(errorVector);
@@ -71,7 +76,7 @@ public class Activation3DLayer {
 //        log.debug("Activation3DLayer layer: preActivation vector:");
 //        MatrixUtils.printMatrix(preActivation);
 //
-        RealMatrix localGradients = null;
+        Matrix3D localGradients = null;
 //
 //        if (!(activationFunc instanceof Softmax)) {
 //            RealMatrix derivation = activationFunc.calculateDerivation(preActivation);
@@ -95,6 +100,7 @@ public class Activation3DLayer {
         return localGradients;
     }
 
+    @Override
     public Dimension getSize() {
         return dimension;
     }

@@ -121,13 +121,11 @@ public class MainTest {
         dataset.shuffleDataset();
 
         Network network = NetworkBuilder.builder()
-//                .append(new ConvLayer(3, 4, new Dimension(3, 32 ,32)))
                 .append(new FullyConnected(10, 4))
                 .append(new ActivationLayer(new ReLu()))
 
                 .append(new FullyConnected(8))
                 .append(new ActivationLayer(new ReLu()))
-//                .append(new DropoutLayer(0.1))
 
                 .append(new FullyConnected(3))
                 .append(new ActivationLayer(new ReLu()))

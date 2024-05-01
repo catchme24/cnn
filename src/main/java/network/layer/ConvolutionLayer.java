@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ConvolutionLayer {
+public class ConvolutionLayer implements Layer3D {
 
     private Matrix3D preActivation;
 
     private Matrix3D postActivation;
 
-    private ConvolutionLayer prev;
+    private Layer3D prev;
 
     private Dimension inputDimension;
 
@@ -56,6 +56,7 @@ public class ConvolutionLayer {
         this.outputDimension.setWidthKernel(kernelSize);
         this.outputDimension.setStride(stride);
         this.kernels = new Matrix3D[kernelsCount];
+        this.biases = new double[kernelsCount];
 //        for (int i = 0; i < kernelsCount; i++) {
 //            kernels.set(i, MatrixUtils.fillRandom(new Matrix3D(this.outputDimension.getChannel(),
 //                                                                    kernelSize,
@@ -69,7 +70,8 @@ public class ConvolutionLayer {
         }
     }
 
-    public void setPrevious(ConvolutionLayer prev) {
+    @Override
+    public void setPrevious(Layer3D prev) {
         if (prev == null) return;
 
         Dimension outputDimensionOfPrevLayer = prev.getSize();
@@ -104,6 +106,7 @@ public class ConvolutionLayer {
 
     }
 
+    @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
         preActivation = inputTensor.copy();
         Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
@@ -112,14 +115,17 @@ public class ConvolutionLayer {
     }
 
 
+    @Override
     public void correctWeights(double learnRate) {
 
     }
 
+    @Override
     public Matrix3D propogateBackward(Matrix3D some) {
         return some;
     }
 
+    @Override
     public Dimension getSize() {
         System.out.println("INPUT" + inputDimension);
         System.out.println("OUTPUT" + outputDimension);
