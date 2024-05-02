@@ -21,7 +21,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void test() throws IOException {
-        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
@@ -38,6 +38,42 @@ public class NetworkModelImplTest {
         layers.add(new Activation3DLayer(new ReLu()));
         layers.add(new Flatten());
         layers.add(new FullyConnected(40));
+        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new FullyConnected(10));
+//        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new ActivationLayer(new Softmax()));
+
+        NetworkModel networkModel = new NetworkModelImpl(layers);
+
+        Object object = networkModel.propogateForward(dataFrame);
+//        MatrixUtils.printMatrix3D((Matrix3D) object);
+        MatrixUtils.printMatrixTest((RealMatrix) object);
+    }
+
+    @Test
+    public void testFirstArchitecture() throws IOException {
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+        Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
+
+        Deque<Layer> layers = new LinkedList<>();
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        layers.add(new ConvolutionLayer(32, 3, 1, imageDimension));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new ConvolutionLayer(64, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new PoolingLayer(2, 2));
+        layers.add(new ConvolutionLayer(128, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new ConvolutionLayer(256, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new PoolingLayer(2, 2));
+        //5 x 5 x 256
+        layers.add(new Flatten());
+        layers.add(new FullyConnected(1024));
+        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new FullyConnected(128));
         layers.add(new ActivationLayer(new ReLu()));
         layers.add(new FullyConnected(10));
 //        layers.add(new ActivationLayer(new ReLu()));

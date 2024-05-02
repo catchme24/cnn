@@ -47,39 +47,53 @@ public class Flatten implements Layer3Dto2D {
         log.debug("Activation3DLayer layer: {} prev size", previous.getSize());
     }
 
-
     @Override
-    public Object propogateBackward(Object input) {
-        return propogateBackward((Matrix3D) input);
+    public Object propogateForward(Object input) {
+        return propogateForward((Matrix3D) input);
     }
 
     @Override
-    public Object propogateForward(Object input) {
-        return propogateBackward((Matrix3D) input);
+    public Object propogateBackward(Object input) {
+        return propogateBackward((RealMatrix) input);
+    }
+
+    @Override
+    public RealMatrix propogateForward(Matrix3D inputTensor) {
+        int size = inputTensor.getCountOfItems();
+        double[][][] matrix3d = inputTensor.getMatrix3d();
+        RealMatrix output = MatrixUtils.createEmptyVector(size);
+        int index = 0;
+        for (int i = 0; i < matrix3d.length; i++){
+            for (int j = 0; j < matrix3d[0].length; j++){
+                for (int k = 0; k < matrix3d[0][0].length; k++){
+                    output.setEntry(index, 0, matrix3d[i][j][k]);
+                    index++;
+                }
+            }
+        }
+        return output;
+    }
+
+    @Override
+    public Matrix3D propogateBackward(RealMatrix inputVector) {
+        double[][][] matrix3d = new double[inputDimension.getChannel()]
+                                            [inputDimension.getWidthTens()]
+                                            [inputDimension.getHeightTens()];
+        int index = 0;
+        for (int i = 0; i < matrix3d.length; i++){
+            for (int j = 0; j < matrix3d[0].length; j++){
+                for (int k = 0; k < matrix3d[0][0].length; k++){
+                    matrix3d[i][j][k] = inputVector.getEntry(index, 0);
+                    index++;
+                }
+            }
+        }
+        return new Matrix3D(matrix3d);
     }
 
     @Override
     public void correctWeights(double learnRate) {
 
-    }
-
-    @Override
-    public RealMatrix propogateBackward(Matrix3D inputTensor) {
-        int size = inputTensor.getCountOfItems();
-
-        double[][][] matrix3d = inputTensor.getMatrix3d();
-
-        RealMatrix output = MatrixUtils.createEmptyVector(size);
-
-
-        // TO-DO cast Matrix3D to RealMatrix
-        return output;
-    }
-
-    @Override
-    public Matrix3D propogateForward(RealMatrix inputVector) {
-        // TO-DO cast RealMatrix to Matrix3D
-        return null;
     }
 
     @Override

@@ -5,8 +5,8 @@ import util.Matrix3D;
 
 public interface Layer3Dto2D extends Layer {
 
-    RealMatrix propogateBackward(Matrix3D inputTensor);
+    Matrix3D propogateBackward(RealMatrix inputVector);
 
-    Matrix3D propogateForward(RealMatrix inputVector);
+    RealMatrix propogateForward(Matrix3D inputTensor);
 
 }

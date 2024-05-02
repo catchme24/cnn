@@ -63,7 +63,7 @@ public class ConvolutionLayer implements Layer3D {
 //                                                                    kernelSize)));
 //        }
         for (int i = 0; i < kernelsCount; i++) {
-            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.outputDimension.getChannel(),
+            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
                                                                     kernelSize,
                                                                     kernelSize));
             biases[i] = 2 * Math.random() - 1;
@@ -75,7 +75,7 @@ public class ConvolutionLayer implements Layer3D {
         if (previous == null) return;
 
         if (!(previous instanceof Layer3D)) {
-            throw new NetworkConfigException("Prev layer for Activation3D must be child of Layer3D");
+            throw new NetworkConfigException("Prev layer for Convolution Layer must be child of Layer3D");
         }
 
         Dimension outputDimensionOfPrevLayer = previous.getSize();
@@ -112,7 +112,7 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
-        System.out.println(outputDimension);
+//        System.out.println(outputDimension);
         preActivation = inputTensor.copy();
         Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
         postActivation = result.copy();
