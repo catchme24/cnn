@@ -420,6 +420,49 @@ public class ConvolutionUtilsTest {
 
         MatrixUtils.printMatrix3D(result);
     }
+    @Test
+    public void maxPooling2DTest() {
+        //wrapping - 3x5x7
+        //kernel - 3x3x3
+        double[][] wrapping = {{1, 2, 3, 0, -1, 8},
+                                {2, 6, 0, 3, 2, 7},
+                                {2, 6, 0, 3, 2, 7},
+                                {0, 8, 1, 5, 3, 6}};
+
+//        Matrix3D wrapping3D = new Matrix3D(wrapping);
+
+        double[][] result = ConvolutionUtils.maxPooling2D(wrapping, 2, 2);
+        RealMatrix matrix = MatrixUtils.createInstance(result);
+        MatrixUtils.printMatrixTest(matrix);
+    }
+
+    @Test
+    public void maxPooling3DTest() {
+        //wrapping - 3x5x7
+        //kernel - 3x3x3
+        double[][][] wrapping = {
+                {       {1, 2, 3, 0, -1, 8},
+                        {2, 6, 0, 3, 2, 7},
+                        {2, 6, 0, 3, 2, 7},
+                        {0, 8, 1, 5, 3, 6}},
+
+                {       {1, 11, 3, 5, -1, 2},
+                        {4, 6, 0, 6, 1, 7},
+                        {2, 6, 0, 3, 2, 7},
+                        {0, 0, 1, 5, 3, 26}},
+
+                {       {2, 2, 5, 0, -2, 4},
+                        {2, 5, 0, -3, 4, 6},
+                        {2, 6, 0, 3, 2, 7},
+                        {3, -8, 1, 5, 3, 2}},
+        };
+
+        Matrix3D wrapping3D = new Matrix3D(wrapping);
+
+        Matrix3D result = ConvolutionUtils.maxPooling3D(wrapping3D, 2, 2);
+
+        MatrixUtils.printMatrix3D(result);
+    }
 
 //    @Test
 //    public void testWrap3D() {

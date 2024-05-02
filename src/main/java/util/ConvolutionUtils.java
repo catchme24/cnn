@@ -44,6 +44,31 @@ public class ConvolutionUtils {
 
         return wrapResult;
     }
+    public static double[][] maxPooling2D(double[][] input, int size, int stride){
+        double [][] result = new double[(input.length - size) / stride + 1][(input[0].length - size) / stride + 1];
+        for (int i = 0; i < result.length; i++){
+            for (int j = 0; j < result[0].length; j++){
+                double max = Double.NEGATIVE_INFINITY;
+                for (int row = i * stride; row < i * stride + size; row++){
+                    for(int column = j * stride; column < j * stride + size; column++){
+                        max = Math.max(max, input[row][column]);
+                    }
+                }
+                result[i][j] = max;
+            }
+        }
+        return result;
+    }
+    public static Matrix3D maxPooling3D(Matrix3D input, int size, int stride){
+        double[][][] input3d = input.getMatrix3d();
+        double[][][] result = new double[input3d.length]
+                                        [(input3d[0].length - size) / stride + 1]
+                                        [(input3d[0][0].length - size) / stride + 1];
+        for (int i = 0; i < input3d.length; i++){
+            result[i] = maxPooling2D(input3d[i], size, stride);
+        }
+        return new Matrix3D(result);
+    }
     public static Matrix3D zeroPadding(Matrix3D input, int count){
         double[][][] input3d = input.getMatrix3d();
         double[][][] result = new double[input3d.length][input3d[0].length + 2 * count][input3d[0][0].length + 2 * count];
