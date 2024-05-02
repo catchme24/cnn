@@ -21,7 +21,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void test() throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
@@ -41,7 +41,7 @@ public class NetworkModelImplTest {
         layers.add(new ActivationLayer(new ReLu()));
         layers.add(new FullyConnected(10));
 //        layers.add(new ActivationLayer(new ReLu()));
-        layers.add(new ActivationLayer(new Softmax()));
+//        layers.add(new ActivationLayer(new Softmax()));
 
         NetworkModel networkModel = new NetworkModelImpl(layers);
 
@@ -52,7 +52,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void testFirstArchitecture() throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
