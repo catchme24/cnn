@@ -1,6 +1,7 @@
 package util;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class MatrixUtilsTest {
 
@@ -54,6 +56,26 @@ public class MatrixUtilsTest {
             System.out.println("-------------------------");
             RealMatrix matrix = MatrixUtils.createInstance(dataFrameArray[i]);
             MatrixUtils.printMatrixTest(matrix);
+        }
+    }
+
+    @Test
+    public void testGetDataFrames() throws IOException {
+        String path = "D:\\kek";
+
+        List<Matrix3D> dataFrames = MatrixUtils.getDataFrames(path);
+
+        Assertions.assertEquals(dataFrames.size(), 12);
+
+        for (Matrix3D dataFrame: dataFrames) {
+            double[][][] dataFrameArray = dataFrame.getMatrix3d();
+            for (int i = 0; i < dataFrameArray.length; i++) {
+                System.out.println("-------------------------");
+                System.out.println("-------------------------");
+                System.out.println("-------------------------");
+                RealMatrix matrix = MatrixUtils.createInstance(dataFrameArray[i]);
+                MatrixUtils.printMatrixTest(matrix);
+            }
         }
     }
 

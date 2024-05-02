@@ -8,17 +8,17 @@ import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
 @Slf4j
-public class ActivationLayer implements Layer  {
+public class ActivationLayer implements Layer2D {
 
     private RealMatrix preActivation;
 
     private RealMatrix postActivation;
 
-    private Layer prev;
+    private Layer previousLayer;
 
     private ActivationFunc activationFunc;
 
-    private int neuronsCount;
+    private Dimension dimension;
 
     public ActivationLayer(ActivationFunc func) {
         if (func == null) {
@@ -27,14 +27,18 @@ public class ActivationLayer implements Layer  {
         this.activationFunc = func;
     }
 
-    public void setPrevious(Layer prev) {
-        if (prev == null) {
+    @Override
+    public void setPrevious(Layer previous) {
+        if (!(previous instanceof Layer2D || previous instanceof Layer3Dto2D)) {
+            throw new NetworkConfigException("Prev layer for FullyConnected must be child of Layer2D");
+        }
+        if (previous == null) {
             throw new NetworkConfigException("Prev layer for activation layer cannot be null!");
         }
-        this.prev = prev;
-        this.neuronsCount = prev.getSize();
-        log.debug("ActivationLayer layer: {} prev size", prev.getSize());
-        log.debug("ActivationLayer layer: {} size", neuronsCount);
+        this.previousLayer = previous;
+        dimension = new Dimension(0, previous.getSize().getHeightTens(), 0);
+        log.debug("ActivationLayer layer: {} prev size", previous.getSize());
+        log.debug("ActivationLayer layer: {} size", dimension.getHeightTens());
     }
 
     @Override
@@ -55,6 +59,16 @@ public class ActivationLayer implements Layer  {
         log.debug("ActivationLayer: End propogateForward with:");
         MatrixUtils.printMatrix(output);
         return output;
+    }
+
+    @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((RealMatrix) input);
+    }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((RealMatrix) input);
     }
 
     @Override
@@ -95,7 +109,7 @@ public class ActivationLayer implements Layer  {
     }
 
     @Override
-    public int getSize() {
-        return neuronsCount;
+    public Dimension getSize() {
+        return dimension;
     }
 }

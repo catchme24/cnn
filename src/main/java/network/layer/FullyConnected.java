@@ -5,11 +5,8 @@ import network.NetworkConfigException;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-
 @Slf4j
-public class FullyConnected implements Layer {
+public class FullyConnected implements Layer2D {
     private RealMatrix offset;
     private RealMatrix offsetGradient;
     private RealMatrix weights;
@@ -19,15 +16,14 @@ public class FullyConnected implements Layer {
 
     private RealMatrix postActivation;
 
-    private Layer prev;
+    private Layer previousLayer;
 
-    private int neuronsCount;
+    private Dimension dimension;
 
     private int inputsCount = 0;
 
     public FullyConnected(int neuronsCount) {
-
-        this.neuronsCount = neuronsCount;
+        this.dimension = new Dimension(0, neuronsCount, 0);
         this.offset = MatrixUtils.createInstance(neuronsCount, 1);
         MatrixUtils.fillRandom(offset);
     }
@@ -39,18 +35,22 @@ public class FullyConnected implements Layer {
         MatrixUtils.fillRandom(weights);
     }
 
-    public void setPrevious(Layer prev) {
+    @Override
+    public void setPrevious(Layer previous) {
         if (inputsCount <= 0) {
-            if (prev == null) {
+            if (previous == null) {
                 throw new NetworkConfigException("Prev layer for fully connected cannot be null!");
             }
-            this.prev = prev;
-            weights = MatrixUtils.createInstance(prev.getSize(), neuronsCount);
-            log.debug("FullyConnected layer: {} prev size", prev.getSize());
-            log.debug("FullyConnected layer: {} size", neuronsCount);
+            if (!(previous instanceof Layer2D || previous instanceof Layer3Dto2D)) {
+                throw new NetworkConfigException("Prev layer for FullyConnected must be child of Layer2D");
+            }
+            this.previousLayer = previous;
+            weights = MatrixUtils.createInstance(previous.getSize().getHeightTens(), dimension.getHeightTens());
+            log.debug("FullyConnected layer: {} prev size", previous.getSize());
+            log.debug("FullyConnected layer: {} size", dimension.getHeightTens());
         } else {
             log.debug("FullyConnected layer: {} prev size", inputsCount);
-            log.debug("FullyConnected layer: {} size", neuronsCount);
+            log.debug("FullyConnected layer: {} size", dimension.getHeightTens());
         }
         MatrixUtils.fillRandom(weights);
     }
@@ -110,14 +110,23 @@ public class FullyConnected implements Layer {
     }
 
     @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((RealMatrix) input);
+    }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((RealMatrix) input);
+    }
+
+    @Override
     public void correctWeights(double learnRate) {
         weights = weights.subtract(weightsGradient.transpose().scalarMultiply(learnRate));
         offset = offset.subtract(offsetGradient.scalarMultiply(learnRate));
     }
 
-
     @Override
-    public int getSize() {
-        return neuronsCount;
+    public Dimension getSize() {
+        return dimension;
     }
 }

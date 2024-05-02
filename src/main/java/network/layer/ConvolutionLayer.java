@@ -16,7 +16,7 @@ public class ConvolutionLayer implements Layer3D {
 
     private Matrix3D postActivation;
 
-    private Layer3D prev;
+    private Layer previousLayer;
 
     private Dimension inputDimension;
 
@@ -71,10 +71,14 @@ public class ConvolutionLayer implements Layer3D {
     }
 
     @Override
-    public void setPrevious(Layer3D prev) {
-        if (prev == null) return;
+    public void setPrevious(Layer previous) {
+        if (previous == null) return;
 
-        Dimension outputDimensionOfPrevLayer = prev.getSize();
+        if (!(previous instanceof Layer3D)) {
+            throw new NetworkConfigException("Prev layer for Activation3D must be child of Layer3D");
+        }
+
+        Dimension outputDimensionOfPrevLayer = previous.getSize();
         inputDimension = new Dimension( outputDimensionOfPrevLayer.getChannel(),
                                         outputDimensionOfPrevLayer.getHeightTens(),
                                         outputDimensionOfPrevLayer.getWidthTens(),
@@ -108,12 +112,23 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
+        System.out.println(outputDimension);
         preActivation = inputTensor.copy();
         Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
         postActivation = result.copy();
         return result;
     }
 
+
+    @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((Matrix3D) input);
+    }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((Matrix3D) input);
+    }
 
     @Override
     public void correctWeights(double learnRate) {
@@ -127,8 +142,6 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public Dimension getSize() {
-        System.out.println("INPUT" + inputDimension);
-        System.out.println("OUTPUT" + outputDimension);
         return outputDimension;
     }
 }

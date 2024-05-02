@@ -1,16 +1,13 @@
 package network.layer;
 
-import org.apache.commons.math3.linear.RealMatrix;
+import util.Matrix3D;
 
 public interface Layer {
 
-    RealMatrix propogateBackward(RealMatrix inputVector);
+    Object propogateBackward(Object input);
 
-    RealMatrix propogateForward(RealMatrix inputVector);
-
+    Object propogateForward(Object input);
     void correctWeights(double learnRate);
-
     void setPrevious(Layer layer);
-
-    int getSize();
+    Dimension getSize();
 }

@@ -16,7 +16,7 @@ public class Activation3DLayer implements Layer3D {
 
     private Matrix3D postActivation;
 
-    private Layer3D prev;
+    private Layer previousLayer;
 
     private ActivationFunc activationFunc;
 
@@ -30,21 +30,24 @@ public class Activation3DLayer implements Layer3D {
     }
 
     @Override
-    public void setPrevious(Layer3D prev) {
-        if (prev == null) {
+    public void setPrevious(Layer previous) {
+        if (!(previous instanceof Layer3D)) {
+            throw new NetworkConfigException("Prev layer for Activation3D must be child of Layer3D");
+        }
+
+        if (previous == null) {
             throw new NetworkConfigException("Prev layer for activation layer cannot be null!");
         }
-        this.prev = prev;
+        previousLayer = previous;
 
+        dimension = new Dimension( previous.getSize().getChannel(),
+                                    previous.getSize().getHeightTens(),
+                                    previous.getSize().getWidthTens(),
+                                    previous.getSize().getStride(),
+                                    previous.getSize().getHeightKernel(),
+                                    previous.getSize().getWidthKernel());
 
-        dimension = new Dimension( prev.getSize().getChannel(),
-                prev.getSize().getHeightTens(),
-                prev.getSize().getWidthTens(),
-                prev.getSize().getStride(),
-                prev.getSize().getHeightKernel(),
-                prev.getSize().getWidthKernel());
-
-        log.debug("Activation3DLayer layer: {} prev size", prev.getSize());
+        log.debug("Activation3DLayer layer: {} prev size", previous.getSize());
 
     }
 
@@ -60,6 +63,16 @@ public class Activation3DLayer implements Layer3D {
 //        log.debug("Activation3DLayer layer: End propogateForward with:");
 //        MatrixUtils.printMatrix3D(outputTensor);
         return outputTensor;
+    }
+
+    @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((Matrix3D) input);
+    }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((Matrix3D) input);
     }
 
     @Override

@@ -13,8 +13,7 @@ public class Dimension {
     private int stride;
     private int heightKernel;
     private int widthKernel;
-
-
+    private int dimension;
 
     public Dimension(int channel, int heightTens, int widthTens, int stride, int heightKernel, int widthKernel) {
         this.channel = channel;

@@ -56,4 +56,8 @@ public class Matrix3D {
     private double[][][] initMatrix(int depth, int height, int width) {
         return new double[depth][height][width];
     }
+
+    public int getCountOfItems() {
+        return matrix3d.length * matrix3d[0].length * matrix3d[0][0].length;
+    }
 }

@@ -1,9 +1,9 @@
-package network;
+package integration;
 
 import function.ReLu;
-import network.layer.Activation3DLayer;
-import network.layer.ConvolutionLayer;
-import network.layer.Dimension;
+import network.TrainableNetwork;
+import network.builder.NetworkBuilder;
+import network.layer.*;
 import org.junit.jupiter.api.Test;
 import util.Matrix3D;
 import util.MatrixUtils;
@@ -59,5 +59,32 @@ public class ArchTest {
 
         System.out.println("---------AFTER CONNECT FULL--------");
         MatrixUtils.printMatrix3D(result8);
+    }
+
+    @Test
+    public void testBuildNetwork() throws IOException {
+        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+
+        Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        TrainableNetwork network = NetworkBuilder.builder()
+                .append(new ConvolutionLayer(32, 5, 1, imageDimension))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(64, 4, 2))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(128, 3, 2))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(256, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new Flatten())
+                .append(new FullyConnected(100))
+                .append(new ActivationLayer(new ReLu()))
+                .append(new FullyConnected(50))
+                .append(new ActivationLayer(new ReLu()))
+                .build();
+
+        System.out.println("---------AFTER testBuildNetwork--------");
     }
 }

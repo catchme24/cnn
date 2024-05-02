@@ -4,11 +4,9 @@ import data.*;
 import data.converter.DatasetRowConverter;
 import data.converter.IrisDatasetConverter;
 import function.*;
-import network.Network;
-import network.NetworkBuilder;
+import network.TrainableNetwork;
+import network.builder.PerceptronBuilder;
 import network.layer.ActivationLayer;
-import network.layer.Dimension;
-import network.layer.DropoutLayer;
 import network.layer.FullyConnected;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +38,7 @@ public class MainTest {
         dataset.shuffleDataset();
 
         //GOOOOOOOOOD
-        Network network = NetworkBuilder.builder()
+        TrainableNetwork network = PerceptronBuilder.builder()
                 .append(new FullyConnected(4, 4))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(3))
@@ -65,7 +63,7 @@ public class MainTest {
         Dataset dataset = datasetHelper.prepareDataset(file, 75, converter);
 //        dataset.shuffleDataset();
 
-        Network network = NetworkBuilder.builder()
+        TrainableNetwork network = PerceptronBuilder.builder()
                 .append(new FullyConnected(3, 4))
                 .append(new ActivationLayer(new LeakyReLu()))
                 .append(new FullyConnected(6))
@@ -95,7 +93,7 @@ public class MainTest {
 
         Dataset dataset = datasetHelper.prepareDataset(file, 65, converter);
 
-        Network network = NetworkBuilder.builder()
+        TrainableNetwork network = PerceptronBuilder.builder()
                 .append(new FullyConnected(4, 4))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(3))
@@ -120,7 +118,7 @@ public class MainTest {
         Dataset dataset = datasetHelper.prepareDataset(file, 75, converter);
         dataset.shuffleDataset();
 
-        Network network = NetworkBuilder.builder()
+        TrainableNetwork network = PerceptronBuilder.builder()
                 .append(new FullyConnected(10, 4))
                 .append(new ActivationLayer(new ReLu()))
 

@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 @Slf4j
 public class MatrixUtils {
@@ -184,5 +184,17 @@ public class MatrixUtils {
         result.setMatrix2d(blue, 2);
 
         return result;
+    }
+
+    public static List<Matrix3D> getDataFrames(String path) throws IOException {
+        List<Matrix3D> inputData = new ArrayList<>();
+        Iterator<String> iterator = FileSystemUtils.instance().getIterator(path);
+        while (iterator.hasNext()) {
+            String pathPicture = iterator.next();
+            System.out.println("reading: " + pathPicture);
+            BufferedImage image = ImageIO.read(new File(pathPicture));
+            inputData.add(getDataFrame(image));
+        }
+        return inputData;
     }
 }

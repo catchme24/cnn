@@ -2,8 +2,10 @@ package network;
 
 import data.Dataset;
 import data.DatasetItem;
+import function.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
+import optimizer.Optimizer;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
@@ -12,20 +14,21 @@ import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
-public class Perceptron implements Network {
+public class Perceptron implements TrainableNetwork {
 
-    private Deque<Layer> layers;
+    private final Deque<Layer> layers;
 
-    Perceptron(Deque<Layer> layers) {
+    public Perceptron(Deque<Layer> layers) {
         this.layers = layers;
         Layer prev = null;
+
         for (Layer layer: layers) {
             layer.setPrevious(prev);
             prev = layer;
         }
     }
 
-
+    @Override
     public void learn(int epoch, double learnRate, Dataset dataset) {
         List<DatasetItem> learn = dataset.getLearnData();
         double rmsePrev = 0;
@@ -79,20 +82,19 @@ public class Perceptron implements Network {
         log.debug("Start STEP ---> with:");
         MatrixUtils.printMatrix(input);
 
-        RealMatrix output = input.copy();
+        Object output = input.copy();
 
         for (Layer layer: layers) {
             output = layer.propogateForward(output);
         }
         log.debug("End STEP ---> with:");
-        MatrixUtils.printMatrix(output);
-        return output;
+        MatrixUtils.printMatrix((RealMatrix) output);
+        return (RealMatrix) output;
     }
 
     private RealMatrix stepBackward(RealMatrix input) {
         log.debug("Start STEP <--- with:");
         MatrixUtils.printMatrix(input);
-
 
         Iterator<Layer> it = layers.descendingIterator();
 
@@ -101,7 +103,7 @@ public class Perceptron implements Network {
         it.hasNext();
         it.next();
 
-        RealMatrix output = input;
+        Object output = input;
 
         while (it.hasNext()) {
             Layer layer = it.next();
@@ -110,8 +112,8 @@ public class Perceptron implements Network {
         }
 
         log.debug("End STEP <--- with:");
-        MatrixUtils.printMatrix(output);
-        return output;
+        MatrixUtils.printMatrix((RealMatrix) output);
+        return (RealMatrix) output;
     }
 
     private void correctWeights(double learnRate) {
@@ -120,6 +122,26 @@ public class Perceptron implements Network {
             layer.correctWeights(learnRate);
         }
         log.debug("End CORRECT WEIGHTS");
+    }
+
+    @Override
+    public void configure(Optimizer optimizer, LossFunc loss) {
+
+    }
+
+    @Override
+    public void learn(int epoch, Dataset dataset) {
+
+    }
+
+    @Override
+    public void learn(int epoch, int batchSize, Dataset dataset) {
+
+    }
+
+    @Override
+    public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
+
     }
 
     @Override
