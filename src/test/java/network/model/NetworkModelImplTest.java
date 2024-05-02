@@ -76,7 +76,7 @@ public class NetworkModelImplTest {
         layers.add(new FullyConnected(128));
         layers.add(new ActivationLayer(new ReLu()));
         layers.add(new FullyConnected(10));
-//        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new ActivationLayer(new ReLu()));
         layers.add(new ActivationLayer(new Softmax()));
 
         NetworkModel networkModel = new NetworkModelImpl(layers);
