@@ -76,19 +76,19 @@ public class Flatten implements Layer3Dto2D {
 
     @Override
     public Matrix3D propogateBackward(RealMatrix inputVector) {
-        double[][][] matrix3d = new double[inputDimension.getChannel()]
+        double[][][] errorTensor = new double[inputDimension.getChannel()]
                                             [inputDimension.getWidthTens()]
                                             [inputDimension.getHeightTens()];
         int index = 0;
-        for (int i = 0; i < matrix3d.length; i++){
-            for (int j = 0; j < matrix3d[0].length; j++){
-                for (int k = 0; k < matrix3d[0][0].length; k++){
-                    matrix3d[i][j][k] = inputVector.getEntry(index, 0);
+        for (int i = 0; i < errorTensor.length; i++){
+            for (int j = 0; j < errorTensor[0].length; j++){
+                for (int k = 0; k < errorTensor[0][0].length; k++){
+                    errorTensor[i][j][k] = inputVector.getEntry(index, 0);
                     index++;
                 }
             }
         }
-        return new Matrix3D(matrix3d);
+        return new Matrix3D(errorTensor);
     }
 
     @Override

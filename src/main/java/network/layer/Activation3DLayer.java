@@ -66,21 +66,6 @@ public class Activation3DLayer implements Layer3D {
     }
 
     @Override
-    public Object propogateBackward(Object input) {
-        return propogateBackward((Matrix3D) input);
-    }
-
-    @Override
-    public Object propogateForward(Object input) {
-        return propogateForward((Matrix3D) input);
-    }
-
-    @Override
-    public void correctWeights(double learnRate) {
-
-    }
-
-    @Override
     public Matrix3D propogateBackward(Matrix3D errorVector) {
 
 //        log.debug("Activation3DLayer layer: Start propogateBackward with error vector:");
@@ -111,6 +96,21 @@ public class Activation3DLayer implements Layer3D {
 //        log.debug("Activation3DLayer layer: End propogateBackward with local gradient:");
 //        MatrixUtils.printMatrix(localGradients);
         return localGradients;
+    }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((Matrix3D) input);
+    }
+
+    @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((Matrix3D) input);
+    }
+
+    @Override
+    public void correctWeights(double learnRate) {
+
     }
 
     @Override

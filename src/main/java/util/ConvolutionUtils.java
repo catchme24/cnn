@@ -1,5 +1,6 @@
 package util;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -43,6 +44,37 @@ public class ConvolutionUtils {
         }
 
         return wrapResult;
+    }
+    public static Matrix3D backMaxPooling3D(Matrix3D input, Matrix3D pool, int size, int stride){
+        double[][][] input3d = input.getMatrix3d();
+        double[][][] pool3d = pool.getMatrix3d();
+        double[][][] result = new double[input3d.length][input3d[0].length][input3d[0][0].length];
+        for (int i = 0; i < result.length;i++){
+            result[i] =  backMaxPooling2D(input3d[i], pool3d[i], 2, 2);
+        }
+        return new Matrix3D(result);
+    }
+
+    public static double[][] backMaxPooling2D(double[][] input, double[][] pool, int size, int stride){
+        double [][] result = new double[input.length][input[0].length];
+        for (int i = 0; i < pool.length; i++){
+            for (int j = 0; j < pool[0].length; j++){
+                double max = Double.NEGATIVE_INFINITY;
+                int iMax = 0;
+                int jMax = 0;
+                for (int row = i * stride; row < i * stride + size; row++){
+                    for(int column = j * stride; column < j * stride + size; column++){
+                        if (input[row][column] > max){
+                            iMax = row;
+                            jMax = column;
+                            max = input[row][column];
+                        }
+                    }
+                }
+                result[iMax][jMax] = pool[i][j];
+            }
+        }
+        return result;
     }
     public static double[][] maxPooling2D(double[][] input, int size, int stride){
         double [][] result = new double[(input.length - size) / stride + 1][(input[0].length - size) / stride + 1];

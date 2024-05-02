@@ -50,4 +50,28 @@ public class PoolingLayerTest {
         MatrixUtils.printMatrix3D(result1);
         MatrixUtils.printMatrix3D(result2);
     }
+
+    @Test
+    public void testBackPropagatePoolingLayer() throws IOException {
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+
+        Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        ConvolutionLayer layer1 = new ConvolutionLayer(2, 3, 1, imageDimension);
+
+        PoolingLayer layer2 = new PoolingLayer(2, 2);
+        layer2.setPrevious(layer1);
+
+
+        Matrix3D result1 = layer1.propogateForward(dataFrame);
+        Matrix3D result2 = layer2.propogateForward(result1);
+        Matrix3D result3 = layer2.propogateBackward(result2);
+
+        System.out.println("---------AFTER CONNECT FULL--------");
+        MatrixUtils.printMatrix3D(result1);
+        MatrixUtils.printMatrix3D(result2);
+        MatrixUtils.printMatrix3D(result3);
+    }
 }

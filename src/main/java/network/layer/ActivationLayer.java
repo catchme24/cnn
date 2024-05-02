@@ -103,7 +103,7 @@ public class ActivationLayer implements Layer2D {
             localGradients = errorVector.copy();
         }
 
-        log.debug("ActivationLayer: End propogateBackward with local gradient:");
+        log.debug("ActivationLayer: End propogate Backward with local gradient:");
         MatrixUtils.printMatrix(localGradients);
         return localGradients;
     }

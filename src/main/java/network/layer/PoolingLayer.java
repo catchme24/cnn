@@ -76,8 +76,12 @@ public class PoolingLayer implements Layer3D {
     }
 
     @Override
-    public Matrix3D propogateBackward(Matrix3D some) {
-        return some;
+    public Matrix3D propogateBackward(Matrix3D errorTensor) {
+//        Matrix3D error = new Matrix3D(inputDimension.getChannel(),
+//                                    inputDimension.getWidthTens(),
+//                                    inputDimension.getHeightTens());
+        Matrix3D error = ConvolutionUtils.backMaxPooling3D(preActivation, errorTensor, outputDimension.getWidthKernel(), outputDimension.getStride());
+        return error;
     }
 
     @Override
