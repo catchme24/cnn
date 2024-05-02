@@ -29,11 +29,30 @@ public class MatrixUtils {
     /*
     Заполняет матрицу рандомными значениями в диапазоне [0, 1]
      */
+
+    public static double[] fillRandom(double [] input) {
+        for(int i = 0; i < input.length; i++) {
+            input[i] = random.nextDouble() * 2 - 1;
+        }
+        return input;
+    }
+
     public static RealMatrix fillRandom(RealMatrix matrix) {
         for(int i = 0; i < matrix.getRowDimension(); i++) {
             for(int j = 0; j < matrix.getColumnDimension(); j++) {
-//                matrix.setEntry(i, j, Math.random() * 2 - 1);
                 matrix.setEntry(i, j, random.nextDouble() * 2 - 1);
+            }
+        }
+        return matrix;
+    }
+
+    public static Matrix3D fillRandom(Matrix3D matrix) {
+        double[][][] array3D = matrix.getMatrix3d();
+        for(int i = 0; i < array3D.length; i++) {
+            for(int j = 0; j < array3D[0].length; j++) {
+                for(int k = 0; k < array3D[0][0].length; k++) {
+                    array3D[i][j][k] = random.nextDouble() * 2 - 1;
+                }
             }
         }
         return matrix;
@@ -74,30 +93,40 @@ public class MatrixUtils {
         return v > 0 ? 1 : 0;
     }
 
+    public static double[] fillHeNormal(double [] input) {
+        int count = input.length;
+        double stdDev = Math.sqrt(2.0 / count);
+        for(int i = 0; i < input.length; i++) {
+            input[i] = random.nextGaussian() * stdDev;
+        }
+        return input;
+    }
+
+    public static RealMatrix fillHeNormal(RealMatrix matrix) {
+        int count = matrix.getRowDimension() * matrix.getColumnDimension();
+        double stdDev = Math.sqrt(2.0 / count);
+        for(int i = 0; i < matrix.getRowDimension(); i++) {
+            for(int j = 0; j < matrix.getColumnDimension(); j++) {
+                matrix.setEntry(i, j, random.nextGaussian() * stdDev);
+            }
+        }
+        return matrix;
+    }
 
     public static Matrix3D fillHeNormal(Matrix3D matrix) {
         double[][][] array3D = matrix.getMatrix3d();
+        int count = array3D.length * array3D[0].length * array3D[0][0].length;
+        double stdDev = Math.sqrt(2.0 / count);
         for(int i = 0; i < array3D.length; i++) {
             for(int j = 0; j < array3D[0].length; j++) {
                 for(int k = 0; k < array3D[0][0].length; k++) {
-                    // TO-DO HE NORMAL
+                    array3D[i][j][k] = random.nextGaussian() * stdDev;
                 }
             }
         }
         return matrix;
     }
 
-    public static Matrix3D fillRandom(Matrix3D matrix) {
-        double[][][] array3D = matrix.getMatrix3d();
-        for(int i = 0; i < array3D.length; i++) {
-            for(int j = 0; j < array3D[0].length; j++) {
-                for(int k = 0; k < array3D[0][0].length; k++) {
-                    array3D[i][j][k] = random.nextDouble() * 2 - 1;
-                }
-            }
-        }
-        return matrix;
-    }
     public static void printMatrix3D(Matrix3D matrix) {
         double[][][] array3D = matrix.getMatrix3d();
         for(int i = 0; i < array3D.length; i++) {

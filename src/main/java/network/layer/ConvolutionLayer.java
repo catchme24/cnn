@@ -63,11 +63,11 @@ public class ConvolutionLayer implements Layer3D {
 //                                                                    kernelSize)));
 //        }
         for (int i = 0; i < kernelsCount; i++) {
-            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
+            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
                                                                     kernelSize,
                                                                     kernelSize));
-            biases[i] = 2 * Math.random() - 1;
         }
+        MatrixUtils.fillHeNormal(biases);
     }
 
     @Override
@@ -102,12 +102,11 @@ public class ConvolutionLayer implements Layer3D {
 //                                                                            this.outputDimension.getWidthKernel())));
 //        }
         for (int i = 0; i < this.outputDimension.getChannel(); i++) {
-            kernels[i] = MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
+            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
                                                                         this.outputDimension.getHeightKernel(),
                                                                         this.outputDimension.getWidthKernel()));
-            biases[i] = 2 * Math.random() - 1;
         }
-
+        MatrixUtils.fillHeNormal(biases);
     }
 
     @Override
@@ -119,10 +118,9 @@ public class ConvolutionLayer implements Layer3D {
         return result;
     }
 
-
     @Override
-    public Object propogateBackward(Object input) {
-        return propogateBackward((Matrix3D) input);
+    public Matrix3D propogateBackward(Matrix3D some) {
+        return some;
     }
 
     @Override
@@ -131,13 +129,13 @@ public class ConvolutionLayer implements Layer3D {
     }
 
     @Override
-    public void correctWeights(double learnRate) {
-
+    public Object propogateBackward(Object input) {
+        return propogateBackward((Matrix3D) input);
     }
 
     @Override
-    public Matrix3D propogateBackward(Matrix3D some) {
-        return some;
+    public void correctWeights(double learnRate) {
+
     }
 
     @Override

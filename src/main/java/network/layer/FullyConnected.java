@@ -25,14 +25,14 @@ public class FullyConnected implements Layer2D {
     public FullyConnected(int neuronsCount) {
         this.dimension = new Dimension(0, neuronsCount, 0);
         this.offset = MatrixUtils.createInstance(neuronsCount, 1);
-        MatrixUtils.fillRandom(offset);
+        MatrixUtils.fillHeNormal(offset);
     }
 
     public FullyConnected(int neuronsCount, int inputsCount) {
         this(neuronsCount);
         this.inputsCount = inputsCount;
         weights = MatrixUtils.createInstance(inputsCount, neuronsCount);
-        MatrixUtils.fillRandom(weights);
+        MatrixUtils.fillHeNormal(weights);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FullyConnected implements Layer2D {
             log.debug("FullyConnected layer: {} prev size", inputsCount);
             log.debug("FullyConnected layer: {} size", dimension.getHeightTens());
         }
-        MatrixUtils.fillRandom(weights);
+        MatrixUtils.fillHeNormal(weights);
     }
 
     @Override
@@ -110,13 +110,13 @@ public class FullyConnected implements Layer2D {
     }
 
     @Override
-    public Object propogateBackward(Object input) {
-        return propogateBackward((RealMatrix) input);
+    public Object propogateForward(Object input) {
+        return propogateForward((RealMatrix) input);
     }
 
     @Override
-    public Object propogateForward(Object input) {
-        return propogateForward((RealMatrix) input);
+    public Object propogateBackward(Object input) {
+        return propogateBackward((RealMatrix) input);
     }
 
     @Override

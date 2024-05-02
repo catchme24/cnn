@@ -21,7 +21,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void test() throws IOException {
-        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
@@ -52,7 +52,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void testFirstArchitecture() throws IOException {
-        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
@@ -73,16 +73,29 @@ public class NetworkModelImplTest {
         layers.add(new Flatten());
         layers.add(new FullyConnected(1024));
         layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new DropoutLayer(0.3));
         layers.add(new FullyConnected(128));
         layers.add(new ActivationLayer(new ReLu()));
+//        layers.add(new DropoutLayer(0.3));
         layers.add(new FullyConnected(10));
         layers.add(new ActivationLayer(new ReLu()));
         layers.add(new ActivationLayer(new Softmax()));
 
         NetworkModel networkModel = new NetworkModelImpl(layers);
 
-        Object object = networkModel.propogateForward(dataFrame);
-//        MatrixUtils.printMatrix3D((Matrix3D) object);
-        MatrixUtils.printMatrixTest((RealMatrix) object);
+
+        for (int i = 0; i < 500; i++){
+            RealMatrix object = (RealMatrix) networkModel.propogateForward(dataFrame);
+            System.out.println(i);
+        }
+
+
+//        MatrixUtils.printMatrixTest((RealMatrix) object);
+//        double newSum = 0;
+//        for (int i = 0; i < object.getRowDimension(); i++) {
+//            newSum += object.getEntry(i, 0);
+//        }
+//
+//        System.out.println("СУММА: " + newSum);
     }
 }

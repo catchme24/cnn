@@ -42,6 +42,7 @@ public class DropoutLayer implements Layer2D {
         log.debug("ActivationLayer layer: {} size", dimension);
     }
 
+
     @Override
     public RealMatrix propogateForward(RealMatrix inputVector) {
         log.debug("DropoutLayer: Start propogateForward with:");
@@ -59,21 +60,6 @@ public class DropoutLayer implements Layer2D {
     }
 
     @Override
-    public Object propogateBackward(Object input) {
-        return propogateBackward((RealMatrix) input);
-    }
-
-    @Override
-    public Object propogateForward(Object input) {
-        return propogateBackward((RealMatrix) input);
-    }
-
-    @Override
-    public void correctWeights(double learnRate) {
-
-    }
-
-    @Override
     public RealMatrix propogateBackward(RealMatrix errorVector) {
         log.debug("DropoutLayer: Start propogateForward with:");
         MatrixUtils.printMatrix(errorVector);
@@ -88,6 +74,23 @@ public class DropoutLayer implements Layer2D {
         MatrixUtils.printMatrix(localGradients);
         return localGradients;
     }
+
+    @Override
+    public Object propogateForward(Object input) {
+        return propogateForward((RealMatrix) input);
+    }
+
+    @Override
+    public Object propogateBackward(Object input) {
+        return propogateBackward((RealMatrix) input);
+    }
+
+    @Override
+    public void correctWeights(double learnRate) {
+
+    }
+
+
 
     @Override
     public Dimension getSize() {
