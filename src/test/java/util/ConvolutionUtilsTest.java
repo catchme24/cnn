@@ -660,4 +660,66 @@ public class ConvolutionUtilsTest {
 //        }
 //    }
 
+    @Test
+    public void swapFilters() {
+        double[][][] filter1 = {
+                {       {3, 0, 1},
+                        {1, 0, 3}},
+
+                {       {1, 0, 0},
+                        {1, 3, 0}},
+
+                {       {1, 2, 1},
+                        {2, 1, 1}}
+        };
+
+        double[][][] filter2 = {
+                {       {1, 0, 1},
+                        {1, 2, 1}},
+
+                {       {2, 1, 0},
+                        {0, 1, 1}},
+
+                {       {2, 1, 0},
+                        {1, 0, 2}}
+        };
+
+        Matrix3D matrixFilter1 = new Matrix3D(filter1);
+        Matrix3D matrixFilter2 = new Matrix3D(filter2);
+
+        Matrix3D[] matrixFilters = new Matrix3D[2];
+        matrixFilters[0] = matrixFilter1;
+        matrixFilters[1] = matrixFilter2;
+
+        System.out.println(matrixFilters[0].getMatrix3d().length);
+
+        Matrix3D[] result = ConvolutionUtils.swapFilters(matrixFilters);
+        System.out.println(result.length);
+
+        for (int i = 0; i < result.length; i++) {
+            System.out.println("new " + i + " filter");
+            MatrixUtils.printMatrix3D(result[i]);
+        }
+    }
+
+    @Test
+    public void invertRowsAndColumns() {
+
+        double[][] filter1 = {
+                                {1, 2, 3, 4, 5, 6, 7, 8},
+                                {9, 10, 11, 12, 13, 14, 15, 16},
+                                {3, 1, 2, 7, 9, 0, 2, 1},
+                                {1, 2, 3, 4, 5, 6, 7, 8},
+                                {9, 10, 11, 12, 13, 14, 15, 16},
+                                {16, 17, 18, 19, 20, 21, 22, 23},
+        };
+
+        double[][] result = ConvolutionUtils.invertRowsAndColumns(filter1);
+
+        RealMatrix matrix = MatrixUtils.createInstance(result);
+        MatrixUtils.printMatrixTest(matrix);
+    }
+
+
+
 }

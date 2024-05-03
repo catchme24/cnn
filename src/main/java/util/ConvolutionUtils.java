@@ -1,5 +1,7 @@
 package util;
 
+import org.apache.commons.math3.linear.RealMatrix;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,4 +194,33 @@ public class ConvolutionUtils {
         }
         return result;
     }
+
+    public static Matrix3D[] swapFilters(Matrix3D[] filters) {
+        System.out.println(filters[0].getMatrix3d().length);
+        double[][][] filter3d = filters[0].getMatrix3d();
+        Matrix3D[] swappedFilters = new Matrix3D[filters[0].getMatrix3d().length];
+
+        for (int i = 0; i < swappedFilters.length; i++) {
+            swappedFilters[i] = new Matrix3D(filters.length, filter3d[0].length, filter3d[0][0].length);
+            for (int j = 0; j < filters.length; j++) {
+                //равно вызову функции, которая развернет фильтр
+                swappedFilters[i].getMatrix3d()[j] = invertRowsAndColumns(filters[j].getMatrix3d()[i]);
+            }
+        }
+
+        return swappedFilters;
+    }
+
+    public static double[][] invertRowsAndColumns(double[][] matrix) {
+        double[][] result = new double[matrix.length][matrix[0].length];
+
+        for (int i1 = result.length - 1, i2 = 0; i1 >= 0; i1--, i2++) {
+            for (int j1 = result[0].length - 1, j2 = 0; j1 >= 0; j1--, j2++) {
+                result[i1][j1] = matrix[i2][j2];
+            }
+        }
+
+        return result;
+    }
+
 }

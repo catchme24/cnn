@@ -25,9 +25,11 @@ public class MatrixUtilsTest {
     @Test
     public void testFillDropout() {
         double dropout = 0.5;
-        int rowsCount = 10;
+        int rowsCount = 500;
 
-        RealMatrix dropoutVector = MatrixUtils.createEmptyVector(rowsCount);
+        RealMatrix dropoutVector = MatrixUtils.createVectorWithSameValue(rowsCount, 1);
+
+//        MatrixUtils.printMatrixTest(dropoutVector);
 
         RealMatrix result = MatrixUtils.fillDropout(dropoutVector, dropout);
         MatrixUtils.printMatrixTest(result);
@@ -77,6 +79,14 @@ public class MatrixUtilsTest {
                 MatrixUtils.printMatrixTest(matrix);
             }
         }
+    }
+
+    @Test
+    public void getRandomNumber() {
+        System.out.println(MatrixUtils.getRandomNumber(10, 100));
+        System.out.println(MatrixUtils.getRandomNumber(10, 100));
+        System.out.println(MatrixUtils.getRandomNumber(10, 100));
+        System.out.println(MatrixUtils.getRandomNumber(10, 100));
     }
 
 }

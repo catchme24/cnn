@@ -35,7 +35,7 @@ public class DropoutLayer implements Layer2D {
 
         dimension = new Dimension(0, previous.getSize().getHeightTens(), 0);
 
-        this.dropoutVector = MatrixUtils.createInstance(dimension.getHeightTens(), 1);
+        this.dropoutVector = MatrixUtils.createVectorWithSameValue(dimension.getHeightTens(), 1);
         MatrixUtils.fillDropout(dropoutVector, dropout);
 
         log.debug("ActivationLayer layer: {} prev size", previous.getSize());
@@ -47,6 +47,10 @@ public class DropoutLayer implements Layer2D {
     public RealMatrix propogateForward(RealMatrix inputVector) {
         log.debug("DropoutLayer: Start propogateForward with:");
         MatrixUtils.printMatrix(inputVector);
+
+        //CHECK
+        this.dropoutVector = MatrixUtils.createVectorWithSameValue(dimension.getHeightTens(), 1);
+        MatrixUtils.fillDropout(dropoutVector, dropout);
 
         RealMatrix outputVector = inputVector.copy();
 
@@ -63,6 +67,10 @@ public class DropoutLayer implements Layer2D {
     public RealMatrix propogateBackward(RealMatrix errorVector) {
         log.debug("DropoutLayer: Start propogateForward with:");
         MatrixUtils.printMatrix(errorVector);
+
+        //CHECK
+        this.dropoutVector = MatrixUtils.createVectorWithSameValue(dimension.getHeightTens(), 1);
+        MatrixUtils.fillDropout(dropoutVector, dropout);
 
         RealMatrix localGradients = errorVector.copy();
 

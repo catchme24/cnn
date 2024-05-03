@@ -59,34 +59,55 @@ public class MatrixUtils {
     }
 
     public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
+        int quantity = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
 
-        int quantity0 = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
-        int quantity1 = matrix.getRowDimension() - quantity0;
+        System.out.println(quantity);
 
-        int i = 0;
-
-        while (i < matrix.getRowDimension()) {
-            int count0 = 0;
-            int count1 = 0;
-            if (count0 != quantity0 || count1 != quantity1) {
-                int value = binary();
-                if (value == 0) {
-                    count0++;
-                    matrix.setEntry(i, 0, value);
-                } else {
-                    count1++;
-                    matrix.setEntry(i, 0, value);
-                }
-            } else {
-                if (count0 == quantity0)
-                    matrix.setEntry(i, 0, 1);
-                if (count1 == quantity1)
-                    matrix.setEntry(i, 0, 0);
+        int countOfZeroes = 0;
+        while (countOfZeroes < quantity) {
+            int indexOfZero = getRandomNumber(0, matrix.getRowDimension() - 1);
+            if (matrix.getEntry(indexOfZero, 0) != 0) {
+                matrix.setEntry(indexOfZero, 0, 0);
+                countOfZeroes++;
             }
-            i++;
         }
+
         return matrix;
     }
+
+    public static int getRandomNumber(int from, int to) {
+        return from + random.nextInt(to - from + 1);
+    }
+
+//    public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
+//
+//        int quantity0 = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
+//        int quantity1 = matrix.getRowDimension() - quantity0;
+//
+//        int i = 0;
+//
+//        while (i < matrix.getRowDimension()) {
+//            int count0 = 0;
+//            int count1 = 0;
+//            if (count0 != quantity0 || count1 != quantity1) {
+//                int value = binary();
+//                if (value == 0) {
+//                    count0++;
+//                    matrix.setEntry(i, 0, value);
+//                } else {
+//                    count1++;
+//                    matrix.setEntry(i, 0, value);
+//                }
+//            } else {
+//                if (count0 == quantity0)
+//                    matrix.setEntry(i, 0, 1);
+//                if (count1 == quantity1)
+//                    matrix.setEntry(i, 0, 0);
+//            }
+//            i++;
+//        }
+//        return matrix;
+//    }
 
     public static int binary() {
         double v = random.nextDouble() * 2 - 1;
@@ -180,6 +201,10 @@ public class MatrixUtils {
 
     public static RealMatrix createEmptyVector(int row) {
         return worker.createMatrix(row, 1);
+    }
+
+    public static RealMatrix createVectorWithSameValue(int row, double value) {
+        return worker.createMatrix(row, 1).scalarAdd(value);
     }
 
     public static RealMatrix getGroundTruth(double classNumber, int classesCount) {

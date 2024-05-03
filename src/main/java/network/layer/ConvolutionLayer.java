@@ -8,6 +8,7 @@ import util.MatrixUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Slf4j
 public class ConvolutionLayer implements Layer3D {
@@ -27,6 +28,7 @@ public class ConvolutionLayer implements Layer3D {
     private double[] biases;
 
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride) {
+
         if (kernelSize <= 0) {
             throw new NetworkConfigException("Kernel size cannot be 0 or less!");
         }
