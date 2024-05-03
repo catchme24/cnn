@@ -1,10 +1,16 @@
 package util;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import util.task.Convolution;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static util.ArraysUtils.*;
 
@@ -149,6 +155,8 @@ public class ConvolutionUtils {
         int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
         int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
 
+
+
         Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
 
         for(int i = 0; i < kernels.length; i++){
@@ -158,6 +166,32 @@ public class ConvolutionUtils {
 
         return result;
     }
+
+    public static Matrix3D convolutionParallel(Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
+        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
+        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
+
+        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
+
+        TaskUtils.makeTasks(convolutionParallelSplit(result, input, kernels, biases, stride));
+
+        return result;
+    }
+
+    public static List<Callable> convolutionParallelSplit(Matrix3D result, Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
+        List<Callable> tasks = new ArrayList<>();
+
+        int threadCount = 10;
+        int taskCount = kernels.length / threadCount;
+
+        for (int i = 0; i < taskCount; i++) {
+            int indexStart = i * threadCount;
+            Callable task = new Convolution(result, indexStart, indexStart + threadCount - 1, input, kernels, biases, stride);
+            tasks.add(task);
+        }
+        return tasks;
+    }
+
     public static double[][] convolution3D(Matrix3D input, Matrix3D kernel, double bias, int stride) {
         double[][][] matrix3d = input.getMatrix3d();
         double[][][] kernel3d = kernel.getMatrix3d();
