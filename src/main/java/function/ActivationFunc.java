@@ -44,7 +44,7 @@ public interface ActivationFunc {
                 }
             }
         }
-        return new Matrix3D(tensor);
+        return x;
     };
 
     double calculate(double x);

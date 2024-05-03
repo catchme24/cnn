@@ -714,7 +714,25 @@ public class ConvolutionUtilsTest {
                                 {16, 17, 18, 19, 20, 21, 22, 23},
         };
 
-        double[][] result = ConvolutionUtils.invertRowsAndColumns(filter1);
+        double[][] filter2 = {
+                {0, 1, 2},
+                {3, 4, 5},
+                {6, 7, 8}
+        };
+
+        double[][] filter3 = {
+                {0, 0, 0},
+                {1, 1, 1},
+                {2, 2, 2}
+        };
+
+        double[][] filter4 = {
+                {0, 0, 0, 0},
+                {1, 1, 1, 1},
+                {2, 2, 2, 2}
+        };
+
+        double[][] result = ConvolutionUtils.invertRowsAndColumns(filter4);
 
         RealMatrix matrix = MatrixUtils.createInstance(result);
         MatrixUtils.printMatrixTest(matrix);

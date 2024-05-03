@@ -5,6 +5,7 @@ import function.Softmax;
 import jdk.jfr.Percentage;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.Matrix3D;
 import util.MatrixUtils;
@@ -66,36 +67,9 @@ public class Activation3DLayer implements Layer3D {
     }
 
     @Override
-    public Matrix3D propogateBackward(Matrix3D errorVector) {
-
-//        log.debug("Activation3DLayer layer: Start propogateBackward with error vector:");
-//        MatrixUtils.printMatrix(errorVector);
-//
-//        log.debug("Activation3DLayer layer: preActivation vector:");
-//        MatrixUtils.printMatrix(preActivation);
-//
-        Matrix3D localGradients = null;
-//
-//        if (!(activationFunc instanceof Softmax)) {
-//            RealMatrix derivation = activationFunc.calculateDerivation(preActivation);
-//
-//            log.debug("Activation3DLayer layer: derivations vector:");
-//            MatrixUtils.printMatrix(derivation);
-//
-//            localGradients = derivation.copy();
-//
-//            for (int i = 0; i < errorVector.getRowDimension(); i++) {
-//                localGradients.setEntry(i,
-//                        0,
-//                        errorVector.getEntry(i, 0) * derivation.getEntry(i, 0));
-//            }
-//        } else {
-//            localGradients = errorVector.copy();
-//        }
-//
-//        log.debug("Activation3DLayer layer: End propogateBackward with local gradient:");
-//        MatrixUtils.printMatrix(localGradients);
-        return localGradients;
+    public Matrix3D propogateBackward(Matrix3D errorTensor) {
+        Matrix3D localGradient = MatrixUtils.hadamard(activationFunc.calculateDerivation(preActivation), errorTensor);
+        return localGradient;
     }
 
     @Override

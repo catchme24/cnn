@@ -62,4 +62,36 @@ public class ConvolutionLayerTest {
         System.out.println("---------AFTER CONNECT FULL--------");
         MatrixUtils.printMatrix3D(result1);
     }
+
+    @Test
+    public void testBackPropagateConvolutionLayer() throws IOException {
+        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+
+        Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        ConvolutionLayer layer1 = new ConvolutionLayer(2, 8, 8, imageDimension);
+
+        Activation3DLayer layer2 = new Activation3DLayer(new ReLu());
+
+        ConvolutionLayer layer3 = new ConvolutionLayer(2, 2, 1);
+
+        layer2.setPrevious(layer1);
+        layer3.setPrevious(layer2);
+
+        Matrix3D result1 = layer1.propogateForward(dataFrame);
+        Matrix3D result2 = layer2.propogateForward(result1);
+        Matrix3D result3 = layer3.propogateForward(result2);
+        Matrix3D result = layer3.propogateBackward(result3);
+
+        System.out.println("---------Convolution forward--------");
+        MatrixUtils.printMatrix3D(result1);
+        System.out.println("---------Forward activation--------");
+        MatrixUtils.printMatrix3D(result2);
+        System.out.println("---------Convolution forward--------");
+        MatrixUtils.printMatrix3D(result3);
+        System.out.println("---------Convolution backward--------");
+        MatrixUtils.printMatrix3D(result);
+    }
 }

@@ -58,10 +58,23 @@ public class MatrixUtils {
         return matrix;
     }
 
+    public static Matrix3D hadamard(Matrix3D input, Matrix3D multiplier) {
+        double[][][] input3D = input.getMatrix3d();
+        double[][][] multiplier3D = multiplier.getMatrix3d();
+        for(int i = 0; i < input3D.length; i++) {
+            for(int j = 0; j < input3D[0].length; j++) {
+                for(int k = 0; k < input3D[0][0].length; k++) {
+                    input3D[i][j][k] *= multiplier3D[i][j][k];
+                }
+            }
+        }
+        return input;
+    }
+
     public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
         int quantity = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
 
-        System.out.println(quantity);
+//        System.out.println(quantity);
 
         int countOfZeroes = 0;
         while (countOfZeroes < quantity) {

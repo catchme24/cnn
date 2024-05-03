@@ -27,6 +27,10 @@ public class ConvolutionLayer implements Layer3D {
 
     private double[] biases;
 
+    private Matrix3D[] weightGradient;
+
+    private double[] biasesGradient;
+
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride) {
 
         if (kernelSize <= 0) {
@@ -121,8 +125,25 @@ public class ConvolutionLayer implements Layer3D {
     }
 
     @Override
-    public Matrix3D propogateBackward(Matrix3D some) {
-        return some;
+    public Matrix3D propogateBackward(Matrix3D localGradient) {
+
+        weightGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
+
+        biasesGradient = ConvolutionUtils.sumForBiases(localGradient);
+
+        Matrix3D[] swappedKernels = ConvolutionUtils.swapFilters(kernels);
+        Matrix3D errorTensor;
+        if(outputDimension.getStride() == 1){
+            //Формула без Dilate(s-1)
+            errorTensor = ConvolutionUtils.zeroPadding(localGradient, outputDimension.getHeightKernel() -1);
+            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+        } else {
+            //Формула c Dilate(s-1)
+            errorTensor = ConvolutionUtils.dilate(localGradient, outputDimension.getStride() - 1);
+            errorTensor = ConvolutionUtils.zeroPadding(errorTensor, outputDimension.getHeightKernel() -1);
+            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+        }
+        return errorTensor;
     }
 
     @Override
