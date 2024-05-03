@@ -52,7 +52,7 @@ public class NetworkModelImplTest {
 
     @Test
     public void testFirstArchitecture() throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\0001.png"));
+        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
 
         Deque<Layer> layers = new LinkedList<>();
@@ -85,7 +85,7 @@ public class NetworkModelImplTest {
 
         RealMatrix oneHotEncodingVector = MatrixUtils.createEmptyVector(10);
         oneHotEncodingVector.setEntry(0, 0, 1.0);
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 20; i++){
             RealMatrix object = (RealMatrix) networkModel.propogateForward(dataFrame);
             RealMatrix error = object.subtract(oneHotEncodingVector);
             networkModel.propogateBackward(error);

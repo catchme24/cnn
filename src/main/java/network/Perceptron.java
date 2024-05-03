@@ -2,6 +2,7 @@ package network;
 
 import data.Dataset;
 import data.DatasetItem;
+import data.dataset.DataSet;
 import function.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
@@ -29,8 +30,8 @@ public class Perceptron implements TrainableNetwork {
     }
 
     @Override
-    public void learn(int epoch, double learnRate, Dataset dataset) {
-        List<DatasetItem> learn = dataset.getLearnData();
+    public void learn(int epoch, double learnRate, DataSet dataset) {
+        List<DatasetItem> learn = dataset.getTrainData();
         double rmsePrev = 0;
         int selectionCount = learn.size();
 
@@ -130,22 +131,22 @@ public class Perceptron implements TrainableNetwork {
     }
 
     @Override
-    public void learn(int epoch, Dataset dataset) {
+    public void learn(int epoch, DataSet dataset) {
 
     }
 
     @Override
-    public void learn(int epoch, int batchSize, Dataset dataset) {
+    public void learn(int epoch, int batchSize, DataSet dataset) {
 
     }
 
     @Override
-    public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
+    public void learn(int epoch, double learnRate, int batchSize, DataSet dataset) {
 
     }
 
     @Override
-    public void test(Dataset dataset) {
+    public void test(DataSet dataset) {
         List<DatasetItem> test = dataset.getTestData();
 //        double selectionCount = 10;
         int selectionCount = test.size();

@@ -2,6 +2,7 @@ package network;
 
 import data.Dataset;
 import data.DatasetItem;
+import data.dataset.DataSet;
 import function.DefaultLossFunction;
 import function.LossFunc;
 import network.model.NetworkModel;
@@ -32,13 +33,13 @@ public abstract class AbstractTrainableNetwork implements TrainableNetwork {
     }
 
     @Override
-    public void learn(int epoch, Dataset dataset) {
+    public void learn(int epoch, DataSet dataset) {
         learn(epoch, 0.01, dataset);
     }
 
     @Override
-    public void learn(int epoch, double learnRate, Dataset dataset) {
-        List<DatasetItem> learn = dataset.getLearnData();
+    public void learn(int epoch, double learnRate, DataSet dataset) {
+        List<DatasetItem> learn = dataset.getTrainData();
         int selectionCount = learn.size();
 
         for (int epochIndex = 0; epochIndex < epoch; epochIndex++) {
@@ -56,7 +57,7 @@ public abstract class AbstractTrainableNetwork implements TrainableNetwork {
     }
 
     @Override
-    public void test(Dataset dataset) {
+    public void test(DataSet dataset) {
 
     }
 }

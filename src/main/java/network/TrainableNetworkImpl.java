@@ -1,6 +1,6 @@
 package network;
 
-import data.Dataset;
+import data.dataset.DataSet;
 import network.model.NetworkModel;
 
 public class TrainableNetworkImpl extends AbstractTrainableNetwork {
@@ -12,12 +12,12 @@ public class TrainableNetworkImpl extends AbstractTrainableNetwork {
 
 
     @Override
-    public void learn(int epoch, int batchSize, Dataset dataset) {
+    public void learn(int epoch, int batchSize, DataSet dataset) {
         // TO-DO
     }
 
     @Override
-    public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
+    public void learn(int epoch, double learnRate, int batchSize, DataSet dataset) {
 
     }
 }

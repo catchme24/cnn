@@ -3,6 +3,9 @@ package integration;
 import data.*;
 import data.converter.DatasetRowConverter;
 import data.converter.IrisDatasetConverter;
+import data.dataset.DataSet;
+import data.dataset.DatasetHelper;
+import data.dataset.MyDatasetParser;
 import function.*;
 import network.TrainableNetwork;
 import network.builder.PerceptronBuilder;
@@ -34,7 +37,7 @@ public class MainTest {
         String pathIris = "src/main/resources/iris.data";
         File file = new File(pathIris);
 
-        Dataset dataset = datasetHelper.prepareDataset(file, 70, converter);
+        DataSet dataset = datasetHelper.prepareDataset(file, file, file, new MyDatasetParser());
         dataset.shuffleDataset();
 
         //GOOOOOOOOOD
@@ -60,7 +63,7 @@ public class MainTest {
         String pathIris = "src/main/resources/iris.data";
         File file = new File(pathIris);
 
-        Dataset dataset = datasetHelper.prepareDataset(file, 75, converter);
+        DataSet dataset = datasetHelper.prepareDataset(file, file, file, new MyDatasetParser());
 //        dataset.shuffleDataset();
 
         TrainableNetwork network = PerceptronBuilder.builder()
@@ -91,7 +94,7 @@ public class MainTest {
         String pathIris = "src/main/resources/iris.data";
         File file = new File(pathIris);
 
-        Dataset dataset = datasetHelper.prepareDataset(file, 65, converter);
+        DataSet dataset = datasetHelper.prepareDataset(file, file, file, new MyDatasetParser());
 
         TrainableNetwork network = PerceptronBuilder.builder()
                 .append(new FullyConnected(4, 4))
@@ -115,7 +118,7 @@ public class MainTest {
         String pathIris = "src/main/resources/iris.data";
         File file = new File(pathIris);
 
-        Dataset dataset = datasetHelper.prepareDataset(file, 75, converter);
+        DataSet dataset = datasetHelper.prepareDataset(file, file, file, new MyDatasetParser());
         dataset.shuffleDataset();
 
         TrainableNetwork network = PerceptronBuilder.builder()
