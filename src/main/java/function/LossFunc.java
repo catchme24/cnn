@@ -5,7 +5,7 @@ import util.Matrix3D;
 
 public interface LossFunc {
 
-    void calculate(RealMatrix x);
+    void calculate(RealMatrix x, RealMatrix y);
 
     double getOveralLoss();
 

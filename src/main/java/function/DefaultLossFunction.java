@@ -7,12 +7,22 @@ public class DefaultLossFunction implements LossFunc {
     private double loss;
     private int countOfExamples;
 
+//    @Override
+//    public void calculate(RealMatrix errorVector) {
+//        countOfExamples++;
+//        for (int i = 0; i < errorVector.getRowDimension(); i++) {
+//            loss = loss + Math.pow(errorVector.getEntry(i, 0), 2);
+//        }
+//    }
+
     @Override
-    public void calculate(RealMatrix errorVector) {
+    public void calculate(RealMatrix oneHot, RealMatrix result) {
         countOfExamples++;
-        for (int i = 0; i < errorVector.getRowDimension(); i++) {
-            loss = loss + Math.pow(errorVector.getEntry(i, 0), 2);
+        double lossOfSample = 0;
+        for (int i = 0; i < oneHot.getRowDimension(); i++) {
+            lossOfSample = lossOfSample + Math.log(result.getEntry(i, 0)) * oneHot.getEntry(i, 0);
         }
+        loss = loss + lossOfSample;
     }
 
     @Override

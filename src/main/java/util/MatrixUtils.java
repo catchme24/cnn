@@ -70,6 +70,19 @@ public class MatrixUtils {
         return input;
     }
 
+    public static Matrix3D subtract(Matrix3D input, Matrix3D subtrahend, double learningRate) {
+        double[][][] input3D = input.getMatrix3d();
+        double[][][] subtrahend3D = subtrahend.getMatrix3d();
+        for(int i = 0; i < input3D.length; i++) {
+            for(int j = 0; j < input3D[0].length; j++) {
+                for(int k = 0; k < input3D[0][0].length; k++) {
+                    input3D[i][j][k] -= subtrahend3D[i][j][k] * learningRate;
+                }
+            }
+        }
+        return input;
+    }
+
     public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
         int quantity = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
 
@@ -126,8 +139,7 @@ public class MatrixUtils {
         return v > 0 ? 1 : 0;
     }
 
-    public static double[] fillHeNormal(double [] input) {
-        int count = input.length;
+    public static double[] fillHeNormal(double [] input, int count) {
         double stdDev = Math.sqrt(2.0 / count);
         for(int i = 0; i < input.length; i++) {
             input[i] = random.nextGaussian() * stdDev;
@@ -135,8 +147,7 @@ public class MatrixUtils {
         return input;
     }
 
-    public static RealMatrix fillHeNormal(RealMatrix matrix) {
-        int count = matrix.getRowDimension() * matrix.getColumnDimension();
+    public static RealMatrix fillHeNormal(RealMatrix matrix, int count) {
         double stdDev = Math.sqrt(2.0 / count);
         for(int i = 0; i < matrix.getRowDimension(); i++) {
             for(int j = 0; j < matrix.getColumnDimension(); j++) {
@@ -146,9 +157,8 @@ public class MatrixUtils {
         return matrix;
     }
 
-    public static Matrix3D fillHeNormal(Matrix3D matrix) {
+    public static Matrix3D fillHeNormal(Matrix3D matrix, int count) {
         double[][][] array3D = matrix.getMatrix3d();
-        int count = array3D.length * array3D[0].length * array3D[0][0].length;
         double stdDev = Math.sqrt(2.0 / count);
         for(int i = 0; i < array3D.length; i++) {
             for(int j = 0; j < array3D[0].length; j++) {

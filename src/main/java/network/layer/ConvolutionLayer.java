@@ -2,6 +2,7 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import util.ConvolutionUtils;
 import util.Matrix3D;
 import util.MatrixUtils;
@@ -27,7 +28,7 @@ public class ConvolutionLayer implements Layer3D {
 
     private double[] biases;
 
-    private Matrix3D[] weightGradient;
+    private Matrix3D[] kernelsGradient;
 
     private double[] biasesGradient;
 
@@ -91,9 +92,11 @@ public class ConvolutionLayer implements Layer3D {
         for (int i = 0; i < this.outputDimension.getChannel(); i++) {
             kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
                     this.outputDimension.getHeightKernel(),
-                    this.outputDimension.getWidthKernel()));
+                    this.outputDimension.getWidthKernel()),
+                    outputDimension.getHeightTens() * outputDimension.getWidthTens() * outputDimension.getChannel());
         }
-        MatrixUtils.fillHeNormal(biases);
+        MatrixUtils.fillHeNormal(biases,
+                outputDimension.getHeightTens() * outputDimension.getWidthTens() * outputDimension.getChannel());
     }
 
     @Override
@@ -126,10 +129,10 @@ public class ConvolutionLayer implements Layer3D {
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
 //        System.out.println(outputDimension);
-        System.out.println("Кернелов");
-        System.out.println(kernels.length);
-        System.out.println("Размером");
-        System.out.println(kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
+//        System.out.println("Кернелов");
+//        System.out.println(kernels.length);
+//        System.out.println("Размером");
+//        System.out.println(kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
 
         preActivation = inputTensor.copy();
         Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
@@ -140,7 +143,7 @@ public class ConvolutionLayer implements Layer3D {
     @Override
     public Matrix3D propogateBackward(Matrix3D localGradient) {
 
-        weightGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
+        kernelsGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
 
         biasesGradient = ConvolutionUtils.sumForBiases(localGradient);
 
@@ -171,7 +174,12 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public void correctWeights(double learnRate) {
-
+        for (int i = 0; i < kernels.length; i++){
+            MatrixUtils.subtract(kernels[i], kernelsGradient[i], learnRate);
+        }
+        for(int i = 0; i < biases.length; i++){
+            biases[i] -= biasesGradient[i] * learnRate;
+        };
     }
 
     @Override
