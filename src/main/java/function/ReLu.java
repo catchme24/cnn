@@ -1,6 +1,8 @@
 package function;
 
 public class ReLu implements ActivationFunc {
+
+    private int some;
     @Override
     public double calculate(double x) {
         return x > 0 ? x : 0;

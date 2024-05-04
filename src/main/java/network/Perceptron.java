@@ -1,8 +1,7 @@
 package network;
 
+import data.DataFrame;
 import data.Dataset;
-import data.DatasetItem;
-import data.dataset.DataSet;
 import function.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
@@ -30,8 +29,8 @@ public class Perceptron implements TrainableNetwork {
     }
 
     @Override
-    public void learn(int epoch, double learnRate, DataSet dataset) {
-        List<DatasetItem> learn = dataset.getTrainData();
+    public void learn(int epoch, double learnRate, Dataset dataset) {
+        List<DataFrame<double[], Integer>> learn = dataset.getTrainData();
         double rmsePrev = 0;
         int selectionCount = learn.size();
 
@@ -42,7 +41,7 @@ public class Perceptron implements TrainableNetwork {
             //Цикл выборок
             for (int selectionIndex = 0; selectionIndex < selectionCount; selectionIndex++) {
                 //ПРЯМОЕ РАСПРОСТРОНЕНИЕ
-                RealMatrix networkInput = MatrixUtils.createInstanceFromRow(learn.get(selectionIndex).getAttributes()).transpose();
+                RealMatrix networkInput = MatrixUtils.createInstanceFromRow(learn.get(selectionIndex).getSample()).transpose();
                 log.debug("NETWORK INPUT VECTOR VECTOR:");
                 MatrixUtils.printMatrix(networkInput);
 
@@ -51,7 +50,7 @@ public class Perceptron implements TrainableNetwork {
                 MatrixUtils.printMatrix(networkOutput);
 
                 //Формирование выходного вектора класса, например [0, 1, 0, 0, 0] - для 2-ого класса из 5-и
-                RealMatrix groundTruth  = MatrixUtils.getGroundTruth(learn.get(selectionIndex).getClassNumber(), dataset.getClassesCount());
+                RealMatrix groundTruth  = MatrixUtils.getGroundTruth(learn.get(selectionIndex).getLabelNumber(), dataset.getLabelsCount());
                 log.debug("GROUND TRUTH VECTOR:");
                 MatrixUtils.printMatrix(groundTruth);
 
@@ -131,23 +130,23 @@ public class Perceptron implements TrainableNetwork {
     }
 
     @Override
-    public void learn(int epoch, DataSet dataset) {
+    public void learn(int epoch, Dataset dataset) {
 
     }
 
     @Override
-    public void learn(int epoch, int batchSize, DataSet dataset) {
+    public void learn(int epoch, int batchSize, Dataset dataset) {
 
     }
 
     @Override
-    public void learn(int epoch, double learnRate, int batchSize, DataSet dataset) {
+    public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
 
     }
 
     @Override
-    public void test(DataSet dataset) {
-        List<DatasetItem> test = dataset.getTestData();
+    public void test(Dataset dataset) {
+        List<DataFrame<double[], Integer>> test = dataset.getTestData();
 //        double selectionCount = 10;
         int selectionCount = test.size();
         int trueClasses = 0;
@@ -157,7 +156,7 @@ public class Perceptron implements TrainableNetwork {
         //Цикл выборок
         for (int selectionIndex = 0; selectionIndex < selectionCount; selectionIndex++) {
             //Входной вектор
-            RealMatrix networkInput = MatrixUtils.createInstanceFromRow(test.get(selectionIndex).getAttributes()).transpose();
+            RealMatrix networkInput = MatrixUtils.createInstanceFromRow(test.get(selectionIndex).getSample()).transpose();
             log.debug("NETWORK INPUT VECTOR VECTOR:");
             MatrixUtils.printMatrix(networkInput);
 
@@ -167,7 +166,7 @@ public class Perceptron implements TrainableNetwork {
             MatrixUtils.printMatrix(networkOutput);
 
             //Формирование выходного вектора класса, например [0, 1, 0, 0, 0] - для 2-ого класса из 5-и
-            RealMatrix groundTruth  = MatrixUtils.getGroundTruth(test.get(selectionIndex).getClassNumber(), dataset.getClassesCount());
+            RealMatrix groundTruth  = MatrixUtils.getGroundTruth(test.get(selectionIndex).getGroundTruth(), dataset.getLabelsCount());
             log.debug("GROUND TRUTH VECTOR:");
             MatrixUtils.printMatrix(groundTruth);
 
@@ -183,7 +182,7 @@ public class Perceptron implements TrainableNetwork {
 
             double max = networkOutput.getEntry(0, 0);
             int findedClassNumber = 1;
-            int classNumber = Double.valueOf(test.get(selectionIndex).getClassNumber()).intValue();
+            int classNumber = Double.valueOf(test.get(selectionIndex).getLabelNumber()).intValue();
             for (int i = 0; i < networkOutput.getRowDimension(); i++) {
                 double currentValue = networkOutput.getEntry(i, 0);
                 if (currentValue > max) {

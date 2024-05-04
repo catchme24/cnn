@@ -2,69 +2,58 @@ package data;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
-public class BasicDataset implements Dataset {
+public class BasicDataset<T, D> implements Dataset<T, D> {
 
-    private final List<DatasetItem> items;
-    private final HashSet<Double> groundTruthCount;
-    private final int learnPercent;
+    private List<DataFrame<T, D>> train;
+    private List<DataFrame<T, D>> test;
+    private List<DataFrame<T, D>> valid;
+    private int labelsCount;
 
-    public BasicDataset(int learnPercent) {
-        this.learnPercent = learnPercent;
-        this.items = new ArrayList<>();
-        this.groundTruthCount = new HashSet<>();
+    public BasicDataset() {
     }
 
-    void addRow(double[] row) {
-        log.debug("Adding row: {}", row);
-        groundTruthCount.add(getLastElement(row));
-        items.add(new DatasetItemImpl(row));
-        log.debug("Row added");
+    public void setLabelsCount(int labelsCount) {
+        this.labelsCount = labelsCount;
     }
 
-    private int getIndexOfTestData() {
-        return (items.size() * learnPercent / 100);
+    public void addTestDataFrame(List<DataFrame<T, D>> testData) {
+        test = testData;
     }
 
-    private double getLastElement(double[] row) {
-        return row[row.length - 1];
+    public void addTrainDataFrame(List<DataFrame<T, D>> trainData) {
+        train = trainData;
     }
 
-    @Override
-    public List<DatasetItem> getLearnData() {
-        List<DatasetItem> learn = new ArrayList<>();
-        for (int i = 0; i < getIndexOfTestData(); i++) {
-            learn.add(items.get(i));
-        }
-        return learn;
+    public void addValidDataFrame(List<DataFrame<T, D>> validData) {
+        valid = validData;
     }
 
     @Override
-    public List<DatasetItem> getTestData() {
-        List<DatasetItem> test = new ArrayList<>();
-        for (int i = getIndexOfTestData(); i < items.size(); i++) {
-            test.add(items.get(i));
-        }
+    public List<DataFrame<T, D>> getTrainData() {
+        return train;
+    }
+
+    @Override
+    public List<DataFrame<T, D>> getTestData() {
         return test;
     }
 
+    @Override
+    public List<DataFrame<T, D>> getValidData() {
+        return valid;
+    }
+
+    @Override
     public void shuffleDataset() {
-        Collections.shuffle(items);
+        Collections.shuffle(train);
     }
 
     @Override
-    public int getLearnPercent() {
-        return learnPercent;
+    public int getLabelsCount() {
+        return labelsCount;
     }
-
-    @Override
-    public int getClassesCount() {
-        return groundTruthCount.size();
-    }
-
 }

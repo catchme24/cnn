@@ -1,4 +1,4 @@
-package data.dataset;
+package data;
 
 public interface DataFrame<T, R> {
 

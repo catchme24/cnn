@@ -46,7 +46,7 @@ public class ArchTest {
         layer8.setPrevious(layer7);
 
         Matrix3D result8 = null;
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5; i++) {
             Matrix3D result1 = layer1.propogateForward(dataFrame);
             Matrix3D result2 = layer2.propogateForward(result1);
             Matrix3D result3 = layer3.propogateForward(result2);

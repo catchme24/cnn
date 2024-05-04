@@ -2,15 +2,15 @@ package data;
 
 import java.util.List;
 
-public interface Dataset {
+public interface Dataset<T, D> {
 
-    List<DatasetItem> getLearnData();
+    List<DataFrame<T, D>> getTrainData();
 
-    List<DatasetItem>  getTestData();
+    List<DataFrame<T, D>>  getTestData();
+
+    List<DataFrame<T, D>>  getValidData();
 
     void shuffleDataset();
 
-    int getLearnPercent();
-
-    int getClassesCount();
+    int getLabelsCount();
 }

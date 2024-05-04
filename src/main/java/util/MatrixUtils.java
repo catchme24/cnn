@@ -1,6 +1,5 @@
 package util;
 
-import data.DatasetItem;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -206,12 +205,6 @@ public class MatrixUtils {
         }
     }
 
-    public static void printDatasetItemsTest(List<DatasetItem> items) {
-        for (DatasetItem item : items) {
-            log.info(Arrays.toString(item.getAttributes()));
-        }
-    }
-
     public static RealMatrix createEmptyVector(int row) {
         return worker.createMatrix(row, 1);
     }
@@ -223,6 +216,12 @@ public class MatrixUtils {
     public static RealMatrix getGroundTruth(double classNumber, int classesCount) {
         RealMatrix matrix = worker.createMatrix(classesCount, 1);
         matrix.setEntry(Double.valueOf(classNumber).intValue() - 1, 0, 1.0);
+        return matrix;
+    }
+
+    public static RealMatrix createOneHotEncoding(double labelNumber, int labelsCount) {
+        RealMatrix matrix = worker.createMatrix(labelsCount, 1);
+        matrix.setEntry(Double.valueOf(labelNumber).intValue() - 1, 0, 1.0);
         return matrix;
     }
 

@@ -1,4 +1,4 @@
-package data.dataset;
+package data;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import util.Matrix3D;

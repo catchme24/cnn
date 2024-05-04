@@ -23,6 +23,10 @@ public class Activation3DLayer implements Layer3D {
 
     private Dimension dimension;
 
+    public Activation3DLayer() {
+
+    }
+
     public Activation3DLayer(ActivationFunc func) {
         if (func == null) {
             throw new NetworkConfigException("Activation function cannot be null!");
