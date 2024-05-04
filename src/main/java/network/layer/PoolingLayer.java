@@ -29,6 +29,11 @@ public class PoolingLayer implements Layer3D {
     }
 
     @Override
+    public void unchain() {
+        previousLayer = null;
+    }
+
+    @Override
     public void setPrevious(Layer previous) {
         if (previous == null) return;
 
@@ -86,6 +91,11 @@ public class PoolingLayer implements Layer3D {
 
     @Override
     public void correctWeights(double learnRate) {
+
+    }
+
+    @Override
+    public void initWeight() {
 
     }
 

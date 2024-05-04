@@ -5,6 +5,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.Matrix3D;
+import util.MatrixUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,5 +31,11 @@ public class DatasetHelperImplTest {
         Assertions.assertEquals(100, dataset.getTrainData().size());
         Assertions.assertEquals(100, dataset.getValidData().size());
         Assertions.assertEquals(100, dataset.getTestData().size());
+
+        DataFrame<Matrix3D, RealMatrix> frame = dataset.getTrainData().get(0);
+
+        System.out.println(frame.getLabelNumber());
+        MatrixUtils.printMatrix3D(frame.getSample());
+        MatrixUtils.printMatrixTest(frame.getGroundTruth());
     }
 }

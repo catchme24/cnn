@@ -35,6 +35,11 @@ public class Activation3DLayer implements Layer3D {
     }
 
     @Override
+    public void initWeight() {
+
+    }
+
+    @Override
     public void setPrevious(Layer previous) {
         if (!(previous instanceof Layer3D)) {
             throw new NetworkConfigException("Prev layer for Activation3D must be child of Layer3D");
@@ -53,7 +58,11 @@ public class Activation3DLayer implements Layer3D {
                                     previous.getSize().getWidthKernel());
 
         log.debug("Activation3DLayer layer: {} prev size", previous.getSize());
+    }
 
+    @Override
+    public void unchain() {
+        previousLayer = null;
     }
 
     @Override

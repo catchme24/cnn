@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import function.ReLu;
 import function.Softmax;
 import network.TrainableNetwork;
+import network.TrainableNetworkImpl;
 import network.builder.NetworkBuilder;
 import network.layer.*;
 import network.model.NetworkModel;
@@ -159,23 +160,27 @@ public class SaverTest {
         Dimension imageDimension = new Dimension(3, 32, 32);
         layers.add(new ConvolutionLayer(32, 3, 1, imageDimension));
         layers.add(new Activation3DLayer(new ReLu()));
-//        layers.add(new ConvolutionLayer(64, 3, 1));
-//        layers.add(new Activation3DLayer(new ReLu()));
-//        layers.add(new PoolingLayer(2, 2));
-//        layers.add(new ConvolutionLayer(128, 3, 1));
-//        layers.add(new Activation3DLayer(new ReLu()));
-//        layers.add(new ConvolutionLayer(256, 3, 1));
-//        layers.add(new Activation3DLayer(new ReLu()));
-//        layers.add(new PoolingLayer(2, 2));
-//        layers.add(new Flatten());
-//        layers.add(new FullyConnected(1024));
-//        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new ConvolutionLayer(64, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new PoolingLayer(2, 2));
+        layers.add(new ConvolutionLayer(128, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new ConvolutionLayer(256, 3, 1));
+        layers.add(new Activation3DLayer(new ReLu()));
+        layers.add(new PoolingLayer(2, 2));
+        layers.add(new Flatten());
+        layers.add(new FullyConnected(1024));
+        layers.add(new ActivationLayer(new ReLu()));
 //        layers.add(new DropoutLayer(0.3));
-//        layers.add(new FullyConnected(128));
-//        layers.add(new ActivationLayer(new ReLu()));
-//        layers.add(new FullyConnected(10));
-//        layers.add(new ActivationLayer(new ReLu()));
-//        layers.add(new ActivationLayer(new Softmax()));
+        layers.add(new FullyConnected(128));
+        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new FullyConnected(10));
+        layers.add(new ActivationLayer(new ReLu()));
+        layers.add(new ActivationLayer(new Softmax()));
+
+        TrainableNetworkImpl network = new TrainableNetworkImpl(new NetworkModelImpl(layers));
+
+        network.learn(1, 1 , null);
 
         //Прогон сигнала для кеширования преактиваций
 //        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
@@ -183,13 +188,17 @@ public class SaverTest {
 //        Matrix3D object = layer.propogateForward(dataFrame);
 //        MatrixUtils.printMatrix3D(object);
 
-        Gson gson = new Gson();
-//        Gson gson = new GsonBuilder()
+//        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
 //                .setLenient()
-//                .create();
+                .create();
 
         List<String> stringLayers = new ArrayList<>();
         String path = "D:\\network.txt";
+
+        for (Layer layer : layers) {
+            layer.unchain();
+        }
 
         for (Layer layer : layers) {
             stringLayers.add(gson.toJson(layer));
@@ -198,6 +207,7 @@ public class SaverTest {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path)))) {
             for (String stringLayer: stringLayers) {
                 bw.write(stringLayer);
+                bw.newLine();
                 bw.flush();
             }
         } catch (IOException e) {
@@ -214,25 +224,26 @@ public class SaverTest {
         TrainableNetwork network = NetworkBuilder.builder()
                 .append((new ConvolutionLayer(32, 3, 1, imageDimension)))
                 .append(new Activation3DLayer(new ReLu()))
-//                .append(new ConvolutionLayer(64, 3, 1))
-//                .append(new Activation3DLayer(new ReLu()))
-//                .append(new PoolingLayer(2, 2))
-//                .append(new ConvolutionLayer(128, 3, 1))
-//                .append(new Activation3DLayer(new ReLu()))
-//                .append(new ConvolutionLayer(256, 3, 1))
-//                .append(new Activation3DLayer(new ReLu()))
-//                .append(new PoolingLayer(2, 2))
-//                .append(new Flatten())
-//                .append(new FullyConnected(1024))
-//                .append(new ActivationLayer(new ReLu()))
+                .append(new ConvolutionLayer(64, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new PoolingLayer(2, 2))
+                .append(new ConvolutionLayer(128, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(256, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new PoolingLayer(2, 2))
+                .append(new Flatten())
+                .append(new FullyConnected(1024))
+                .append(new ActivationLayer(new ReLu()))
 //                .append(new DropoutLayer(0.3))
-//                .append(new FullyConnected(128))
-//                .append(new ActivationLayer(new ReLu()))
-//                .append(new FullyConnected(10))
-//                .append(new ActivationLayer(new ReLu()))
-//                .append(new ActivationLayer(new Softmax()))
+                .append(new FullyConnected(128))
+                .append(new ActivationLayer(new ReLu()))
+                .append(new FullyConnected(10))
+                .append(new ActivationLayer(new ReLu()))
+                .append(new ActivationLayer(new Softmax()))
                 .build(file);
 
+        System.out.println("СБИЛДИЛОСЬ");
         network.learn(1, 1, null);
 
         //Прогон сигнала для теста

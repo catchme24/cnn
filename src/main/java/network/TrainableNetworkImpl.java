@@ -2,6 +2,7 @@ package network;
 
 import data.Dataset;
 import network.model.NetworkModel;
+import org.apache.commons.math3.linear.RealMatrix;
 import util.Matrix3D;
 import util.MatrixUtils;
 
@@ -29,13 +30,17 @@ public class TrainableNetworkImpl extends AbstractTrainableNetwork {
             throw new RuntimeException(e);
         }
         Matrix3D dataFrame = MatrixUtils.getDataFrame(image);
-        Matrix3D forwardResult = (Matrix3D) networkModel.propogateForward(dataFrame);
+        RealMatrix forwardResult = (RealMatrix) networkModel.propogateForward(dataFrame);
+//        Matrix3D forwardResult = (Matrix3D) networkModel.propogateForward(dataFrame);
         Matrix3D backwardResult = (Matrix3D) networkModel.propogateBackward(forwardResult);
 
         System.out.println("РЕЗУЛЬТАТ ПРЯМОГО");
-        MatrixUtils.printMatrix3D(forwardResult);
+        MatrixUtils.printMatrixTest(forwardResult);
+//        MatrixUtils.printMatrix3D(forwardResult);
         System.out.println("РЕЗУЛЬТАТ ОБРАТНОГО");
         MatrixUtils.printMatrix3D(backwardResult);
+
+
     }
 
     @Override

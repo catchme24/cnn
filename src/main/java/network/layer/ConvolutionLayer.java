@@ -68,10 +68,30 @@ public class ConvolutionLayer implements Layer3D {
 //                                                                    kernelSize,
 //                                                                    kernelSize)));
 //        }
-        for (int i = 0; i < kernelsCount; i++) {
+//        for (int i = 0; i < kernelsCount; i++) {
+//            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
+//                                                                    kernelSize,
+//                                                                    kernelSize));
+//        }
+//        MatrixUtils.fillHeNormal(biases);
+    }
+
+    @Override
+    public void unchain() {
+        previousLayer = null;
+    }
+
+    @Override
+    public void initWeight() {
+        //        for (int i = 0; i < this.kernels.size(); i++) {
+//            kernels.set(i, MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
+//                                                                            this.outputDimension.getHeightKernel(),
+//                                                                            this.outputDimension.getWidthKernel())));
+//        }
+        for (int i = 0; i < this.outputDimension.getChannel(); i++) {
             kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
-                                                                    kernelSize,
-                                                                    kernelSize));
+                    this.outputDimension.getHeightKernel(),
+                    this.outputDimension.getWidthKernel()));
         }
         MatrixUtils.fillHeNormal(biases);
     }
@@ -101,23 +121,16 @@ public class ConvolutionLayer implements Layer3D {
 
         log.debug("Convolution layer: {} prev size", inputDimension);
         log.debug("Convolution layer: {} size", outputDimension);
-
-//        for (int i = 0; i < this.kernels.size(); i++) {
-//            kernels.set(i, MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
-//                                                                            this.outputDimension.getHeightKernel(),
-//                                                                            this.outputDimension.getWidthKernel())));
-//        }
-        for (int i = 0; i < this.outputDimension.getChannel(); i++) {
-            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
-                                                                        this.outputDimension.getHeightKernel(),
-                                                                        this.outputDimension.getWidthKernel()));
-        }
-        MatrixUtils.fillHeNormal(biases);
     }
 
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
 //        System.out.println(outputDimension);
+        System.out.println("Кернелов");
+        System.out.println(kernels.length);
+        System.out.println("Размером");
+        System.out.println(kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
+
         preActivation = inputTensor.copy();
         Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
         postActivation = result.copy();

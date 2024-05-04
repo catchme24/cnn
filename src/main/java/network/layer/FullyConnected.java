@@ -2,13 +2,15 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j
 public class FullyConnected implements Layer2D {
-    private RealMatrix offset;
-    private RealMatrix offsetGradient;
+    private RealMatrix baises;
+    private RealMatrix baisesGradient;
     private RealMatrix weights;
     private RealMatrix weightsGradient;
 
@@ -18,26 +20,40 @@ public class FullyConnected implements Layer2D {
 
     private Layer previousLayer;
 
-    private Dimension dimension;
+    private Dimension inputDimension;
 
-    private int inputsCount = 0;
+    private Dimension outputDimension;
+
 
     public FullyConnected(int neuronsCount) {
-        this.dimension = new Dimension(0, neuronsCount, 0);
-        this.offset = MatrixUtils.createInstance(neuronsCount, 1);
-        MatrixUtils.fillHeNormal(offset);
+        this.outputDimension = new Dimension(0, neuronsCount, 0);
+        this.baises = MatrixUtils.createInstance(neuronsCount, 1);
+//        MatrixUtils.fillHeNormal(baises);
     }
 
     public FullyConnected(int neuronsCount, int inputsCount) {
-        this(neuronsCount);
-        this.inputsCount = inputsCount;
-        weights = MatrixUtils.createInstance(inputsCount, neuronsCount);
+        this.outputDimension = new Dimension(0, neuronsCount, 0);
+        this.inputDimension = new Dimension(0, inputsCount, 0);
+        this.baises = (Array2DRowRealMatrix) MatrixUtils.createInstance(neuronsCount, 1);
+//        this.weights = MatrixUtils.createInstance(inputsCount, neuronsCount);
+//        MatrixUtils.fillHeNormal(weights);
+    }
+
+    @Override
+    public void unchain() {
+        previousLayer = null;
+    }
+
+    @Override
+    public void initWeight() {
+        weights = MatrixUtils.createInstance(inputDimension.getHeightTens(), outputDimension.getHeightTens());
+        MatrixUtils.fillHeNormal(baises);
         MatrixUtils.fillHeNormal(weights);
     }
 
     @Override
     public void setPrevious(Layer previous) {
-        if (inputsCount <= 0) {
+        if (outputDimension.getHeightTens() <= 0) {
             if (previous == null) {
                 throw new NetworkConfigException("Prev layer for fully connected cannot be null!");
             }
@@ -45,14 +61,16 @@ public class FullyConnected implements Layer2D {
                 throw new NetworkConfigException("Prev layer for FullyConnected must be child of Layer2D");
             }
             this.previousLayer = previous;
-            weights = MatrixUtils.createInstance(previous.getSize().getHeightTens(), dimension.getHeightTens());
+            this.inputDimension = new Dimension(0, previous.getSize().getHeightTens(), 0);
+//            weights = MatrixUtils.createInstance(previous.getSize().getHeightTens(), dimension.getHeightTens());
             log.debug("FullyConnected layer: {} prev size", previous.getSize());
-            log.debug("FullyConnected layer: {} size", dimension.getHeightTens());
+            log.debug("FullyConnected layer: {} size", outputDimension);
         } else {
-            log.debug("FullyConnected layer: {} prev size", inputsCount);
-            log.debug("FullyConnected layer: {} size", dimension.getHeightTens());
+            this.inputDimension = new Dimension(0, previous.getSize().getHeightTens(), 0);
+            log.debug("FullyConnected layer: {} prev size", previous.getSize());
+            log.debug("FullyConnected layer: {} size", outputDimension);
         }
-        MatrixUtils.fillHeNormal(weights);
+//        MatrixUtils.fillHeNormal(weights);
     }
 
     @Override
@@ -78,8 +96,18 @@ public class FullyConnected implements Layer2D {
 //        MatrixUtils.printMatrix(offset);
 
         preActivation = inputVector.copy();
+
+//        System.out.println("ВЕСА");
+//        System.out.println(weights.getRowDimension() + "x" + weights.getColumnDimension());
+//        System.out.println("ИНПУТ");
+//        System.out.println(inputVector.getRowDimension() + "x" + inputVector.getColumnDimension());
+//        System.out.println("ОФФСЕТ");
+//        System.out.println(baises.getRowDimension() + "x" + baises.getColumnDimension());
+//        System.out.println("ОФФСЕТ ДАТА");
+//        System.out.println(baises.getData().length + "x" + baises.getData()[0].length);
+
         //Высчитывает сигнал с оффсетом
-        RealMatrix output = weights.transpose().multiply(inputVector).add(offset);
+        RealMatrix output = weights.transpose().multiply(inputVector).add(baises);
         postActivation = output.copy();
         log.debug("FullyConneted: End propogateForward with:");
         MatrixUtils.printMatrix(output);
@@ -95,9 +123,9 @@ public class FullyConnected implements Layer2D {
         log.debug("FullyConneted: preActivation:");
         MatrixUtils.printMatrix(preActivation.transpose());
 
-        offsetGradient = localGradients;
+        baisesGradient = localGradients;
         log.debug("FullyConneted: offsetGradient:");
-        MatrixUtils.printMatrix(offsetGradient);
+        MatrixUtils.printMatrix(baisesGradient);
 
         weightsGradient = localGradients.multiply(preActivation.transpose());
         log.debug("FullyConneted: weightsGradient:");
@@ -122,11 +150,11 @@ public class FullyConnected implements Layer2D {
     @Override
     public void correctWeights(double learnRate) {
         weights = weights.subtract(weightsGradient.transpose().scalarMultiply(learnRate));
-        offset = offset.subtract(offsetGradient.scalarMultiply(learnRate));
+        baises =  (Array2DRowRealMatrix) baises.subtract(baisesGradient.scalarMultiply(learnRate));
     }
 
     @Override
     public Dimension getSize() {
-        return dimension;
+        return outputDimension;
     }
 }

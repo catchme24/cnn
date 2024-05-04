@@ -23,6 +23,16 @@ public class Flatten implements Layer3Dto2D {
     }
 
     @Override
+    public void unchain() {
+        previousLayer = null;
+    }
+
+    @Override
+    public void initWeight() {
+
+    }
+
+    @Override
     public void setPrevious(Layer previous) {
         if (!(previous instanceof Layer3D)) {
             throw new NetworkConfigException("Prev layer for Flatten must be child of Layer3D");

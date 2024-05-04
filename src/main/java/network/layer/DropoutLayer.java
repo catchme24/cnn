@@ -4,6 +4,7 @@ package network.layer;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j
@@ -20,6 +21,16 @@ public class DropoutLayer implements Layer2D {
 
     public DropoutLayer(double dropout) {
         this.dropout = dropout;
+    }
+
+    @Override
+    public void unchain() {
+        previousLayer = null;
+    }
+
+    @Override
+    public void initWeight() {
+
     }
 
     @Override
@@ -41,6 +52,8 @@ public class DropoutLayer implements Layer2D {
         log.debug("ActivationLayer layer: {} prev size", previous.getSize());
         log.debug("ActivationLayer layer: {} size", dimension);
     }
+
+
 
 
     @Override

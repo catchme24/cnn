@@ -8,6 +8,8 @@ public interface Layer {
 
     Object propogateForward(Object input);
     void correctWeights(double learnRate);
+    void initWeight();
     void setPrevious(Layer layer);
+    void unchain();
     Dimension getSize();
 }
