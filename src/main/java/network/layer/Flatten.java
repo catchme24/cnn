@@ -3,7 +3,7 @@ package network.layer;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import org.apache.commons.math3.linear.RealMatrix;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j

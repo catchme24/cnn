@@ -6,9 +6,9 @@ import java.util.concurrent.*;
 
 public class TaskUtils {
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(16);
 
-    public static boolean makeTasks(List<Callable> tasks) {
+    public static boolean makeTasks(List<Callable> tasks, int threadsCount) {
         List<Future> results = new ArrayList<>();
 
         for (int i = 0; i < tasks.size(); i++) {

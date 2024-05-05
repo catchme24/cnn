@@ -3,6 +3,7 @@ package util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.model.Matrix3D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -25,25 +26,6 @@ public class MatrixUtils {
         random.setSeed(seed);
     }
 
-    /*
-    Заполняет матрицу рандомными значениями в диапазоне [0, 1]
-     */
-
-    public static double[] fillRandom(double [] input) {
-        for(int i = 0; i < input.length; i++) {
-            input[i] = random.nextDouble() * 2 - 1;
-        }
-        return input;
-    }
-
-    public static RealMatrix fillRandom(RealMatrix matrix) {
-        for(int i = 0; i < matrix.getRowDimension(); i++) {
-            for(int j = 0; j < matrix.getColumnDimension(); j++) {
-                matrix.setEntry(i, j, random.nextDouble() * 2 - 1);
-            }
-        }
-        return matrix;
-    }
 
     public static Matrix3D fillRandom(Matrix3D matrix) {
         double[][][] array3D = matrix.getMatrix3d();
@@ -83,80 +65,6 @@ public class MatrixUtils {
         return input;
     }
 
-    public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
-        int quantity = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
-
-//        System.out.println(quantity);
-
-        int countOfZeroes = 0;
-        while (countOfZeroes < quantity) {
-            int indexOfZero = getRandomNumber(0, matrix.getRowDimension() - 1);
-            if (matrix.getEntry(indexOfZero, 0) != 0) {
-                matrix.setEntry(indexOfZero, 0, 0);
-                countOfZeroes++;
-            }
-        }
-
-        return matrix;
-    }
-
-    public static int getRandomNumber(int from, int to) {
-        return from + random.nextInt(to - from + 1);
-    }
-
-//    public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
-//
-//        int quantity0 = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
-//        int quantity1 = matrix.getRowDimension() - quantity0;
-//
-//        int i = 0;
-//
-//        while (i < matrix.getRowDimension()) {
-//            int count0 = 0;
-//            int count1 = 0;
-//            if (count0 != quantity0 || count1 != quantity1) {
-//                int value = binary();
-//                if (value == 0) {
-//                    count0++;
-//                    matrix.setEntry(i, 0, value);
-//                } else {
-//                    count1++;
-//                    matrix.setEntry(i, 0, value);
-//                }
-//            } else {
-//                if (count0 == quantity0)
-//                    matrix.setEntry(i, 0, 1);
-//                if (count1 == quantity1)
-//                    matrix.setEntry(i, 0, 0);
-//            }
-//            i++;
-//        }
-//        return matrix;
-//    }
-
-    public static int binary() {
-        double v = random.nextDouble() * 2 - 1;
-        return v > 0 ? 1 : 0;
-    }
-
-    public static double[] fillHeNormal(double [] input, int count) {
-        double stdDev = Math.sqrt(2.0 / count);
-        for(int i = 0; i < input.length; i++) {
-            input[i] = random.nextGaussian() * stdDev;
-        }
-        return input;
-    }
-
-    public static RealMatrix fillHeNormal(RealMatrix matrix, int count) {
-        double stdDev = Math.sqrt(2.0 / count);
-        for(int i = 0; i < matrix.getRowDimension(); i++) {
-            for(int j = 0; j < matrix.getColumnDimension(); j++) {
-                matrix.setEntry(i, j, random.nextGaussian() * stdDev);
-            }
-        }
-        return matrix;
-    }
-
     public static Matrix3D fillHeNormal(Matrix3D matrix, int count) {
         double[][][] array3D = matrix.getMatrix3d();
         double stdDev = Math.sqrt(2.0 / count);
@@ -179,6 +87,63 @@ public class MatrixUtils {
             System.out.println("----------------------------------------");
         }
 
+    }
+
+    public static Matrix3D getDataFrame(BufferedImage image) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+
+        double[][] red = new double[h][w];
+        double[][] green = new double[h][w];
+        double[][] blue = new double[h][w];
+
+        Matrix3D result = new Matrix3D(3, h, w);
+
+        int[] dataBuffInt = image.getRGB(0, 0, w, h, null, 0, w);
+
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                Color c = new Color(dataBuffInt[i * w + j]);
+                red[i][j] =  c.getRed() / 255.0;
+                green[i][j] = c.getGreen() / 255.0;
+                blue[i][j] = c.getBlue() / 255.0;
+            }
+        }
+        result.setMatrix2d(red, 0);
+        result.setMatrix2d(green, 1);
+        result.setMatrix2d(blue, 2);
+
+        return result;
+    }
+
+    public static List<Matrix3D> getDataFrames(String path) throws IOException {
+        List<Matrix3D> inputData = new ArrayList<>();
+        Iterator<String> iterator = FileSystemUtils.instance().getIterator(path);
+        while (iterator.hasNext()) {
+            String pathPicture = iterator.next();
+            System.out.println("reading: " + pathPicture);
+            BufferedImage image = ImageIO.read(new File(pathPicture));
+            inputData.add(getDataFrame(image));
+        }
+        return inputData;
+    }
+
+    public static double[] fillHeNormal(double [] input, int count) {
+        double stdDev = Math.sqrt(2.0 / count);
+        for(int i = 0; i < input.length; i++) {
+            input[i] = random.nextGaussian() * stdDev;
+        }
+        return input;
+    }
+
+    public static RealMatrix fillHeNormal(RealMatrix matrix, int count) {
+        double stdDev = Math.sqrt(2.0 / count);
+        for (int i = 0; i < matrix.getRowDimension(); i++) {
+            for (int j = 0; j < matrix.getColumnDimension(); j++) {
+                matrix.setEntry(i, j, random.nextGaussian() * stdDev);
+            }
+        }
+        return matrix;
     }
 
     public static RealMatrix createInstance(int row, int column) {
@@ -235,42 +200,38 @@ public class MatrixUtils {
         return matrix;
     }
 
-    public static Matrix3D getDataFrame(BufferedImage image) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-
-        double[][] red = new double[h][w];
-        double[][] green = new double[h][w];
-        double[][] blue = new double[h][w];
-
-        Matrix3D result = new Matrix3D(3, h, w);
-
-        int[] dataBuffInt = image.getRGB(0, 0, w, h, null, 0, w);
-
-        for (int i = 0; i < w; i++) {
-            for (int j = 0; j < h; j++) {
-                Color c = new Color(dataBuffInt[i * w + j]);
-                red[i][j] =  c.getRed() / 255.0;
-                green[i][j] = c.getGreen() / 255.0;
-                blue[i][j] = c.getBlue() / 255.0;
-            }
+    public static double[] fillRandom(double [] input) {
+        for(int i = 0; i < input.length; i++) {
+            input[i] = random.nextDouble() * 2 - 1;
         }
-        result.setMatrix2d(red, 0);
-        result.setMatrix2d(green, 1);
-        result.setMatrix2d(blue, 2);
-
-        return result;
+        return input;
     }
 
-    public static List<Matrix3D> getDataFrames(String path) throws IOException {
-        List<Matrix3D> inputData = new ArrayList<>();
-        Iterator<String> iterator = FileSystemUtils.instance().getIterator(path);
-        while (iterator.hasNext()) {
-            String pathPicture = iterator.next();
-            System.out.println("reading: " + pathPicture);
-            BufferedImage image = ImageIO.read(new File(pathPicture));
-            inputData.add(getDataFrame(image));
+    public static RealMatrix fillRandom(RealMatrix matrix) {
+        for(int i = 0; i < matrix.getRowDimension(); i++) {
+            for(int j = 0; j < matrix.getColumnDimension(); j++) {
+                matrix.setEntry(i, j, random.nextDouble() * 2 - 1);
+            }
         }
-        return inputData;
+        return matrix;
+    }
+
+    public static RealMatrix fillDropout(RealMatrix matrix, double dropout) {
+        int quantity = Long.valueOf(Math.round(dropout * matrix.getRowDimension())).intValue();
+
+        int countOfZeroes = 0;
+        while (countOfZeroes < quantity) {
+            int indexOfZero = getRandomNumber(0, matrix.getRowDimension() - 1);
+            if (matrix.getEntry(indexOfZero, 0) != 0) {
+                matrix.setEntry(indexOfZero, 0, 0);
+                countOfZeroes++;
+            }
+        }
+
+        return matrix;
+    }
+
+    public static int getRandomNumber(int from, int to) {
+        return from + random.nextInt(to - from + 1);
     }
 }

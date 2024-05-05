@@ -1,6 +1,7 @@
 package util;
 
 import lombok.extern.slf4j.Slf4j;
+import util.model.Matrix3D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

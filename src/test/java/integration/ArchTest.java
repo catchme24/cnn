@@ -8,19 +8,15 @@ import function.Softmax;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
 import network.layer.*;
-import network.model.NetworkModel;
-import network.model.NetworkModelImpl;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Deque;
-import java.util.LinkedList;
 
 public class ArchTest {
 
@@ -99,9 +95,13 @@ public class ArchTest {
 
     @Test
     public void testFinalArchitecture() throws IOException {
-        String trainPath = "C:\\cifar10_50\\train";
-        String validPath = "C:\\cifar10_50\\valid";
-        String testPath = "C:\\cifar10_50\\test";
+//        String trainPath = "C:\\cifar10_50\\train";
+//        String validPath = "C:\\cifar10_50\\valid";
+//        String testPath = "C:\\cifar10_50\\test";
+
+        String trainPath = "D:\\cifar10_10\\train";
+        String validPath = "D:\\cifar10_10\\valid";
+        String testPath = "D:\\cifar10_10\\test";
 
         File train = new File(trainPath);
         File valid = new File(validPath);
@@ -138,7 +138,8 @@ public class ArchTest {
                 .append(new ActivationLayer(new Softmax()))
                 .build();
 
-        network.learn(10, 1, dataset);
+
+        network.learn(1, 1, dataset);
 
     }
 

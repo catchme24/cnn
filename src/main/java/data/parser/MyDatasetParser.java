@@ -5,7 +5,7 @@ import data.DataFrameFormer;
 import data.DataFrameImage;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.FileSystemUtils;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import java.awt.image.BufferedImage;

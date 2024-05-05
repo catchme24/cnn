@@ -2,6 +2,7 @@ package network;
 
 import data.Dataset;
 import function.LossFunc;
+import network.model.NetworkModel;
 import optimizer.Optimizer;
 
 public interface TrainableNetwork {
@@ -15,6 +16,8 @@ public interface TrainableNetwork {
     void learn(int epoch, int batchSize, Dataset dataset);
 
     void learn(int epoch, double learnRate, int batchSize, Dataset dataset);
+
+    NetworkModel getNetworkModel();
 
     void test(Dataset dataset);
 

@@ -7,7 +7,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;

@@ -6,13 +6,8 @@ import function.DefaultAccuracyFunction;
 import function.DefaultLossFunction;
 import network.model.NetworkModel;
 import org.apache.commons.math3.linear.RealMatrix;
-import util.Matrix3D;
-import util.MatrixUtils;
+import util.model.Matrix3D;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class TrainableNetworkImpl extends AbstractTrainableNetwork {
@@ -72,5 +67,10 @@ public class TrainableNetworkImpl extends AbstractTrainableNetwork {
     @Override
     public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
 
+    }
+
+    @Override
+    public NetworkModel getNetworkModel() {
+        return networkModel;
     }
 }

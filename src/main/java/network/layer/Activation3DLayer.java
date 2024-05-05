@@ -1,13 +1,9 @@
 package network.layer;
 
 import function.ActivationFunc;
-import function.Softmax;
-import jdk.jfr.Percentage;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
-import org.apache.commons.math3.exception.MathArithmeticException;
-import org.apache.commons.math3.linear.RealMatrix;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j

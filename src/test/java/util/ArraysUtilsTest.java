@@ -17,7 +17,7 @@ public class ArraysUtilsTest {
         };
 
 
-        double[][] subMatrix = ArraysUtils.getSubArray(matrix, 1, 3, 2, 6);
+        double[][] subMatrix = ArraysUtils.getSubArrayImmutable(matrix, 1, 3, 2, 6);
 
         //Visualization
         RealMatrix forConsole = MatrixUtils.createInstance(subMatrix);

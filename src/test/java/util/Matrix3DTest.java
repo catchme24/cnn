@@ -3,6 +3,7 @@ package util;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import util.model.Matrix3D;
 
 import java.util.Arrays;
 

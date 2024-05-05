@@ -1,18 +1,14 @@
 package network.layer;
 
-import com.sun.tools.javac.Main;
 import function.ReLu;
 import org.junit.jupiter.api.Test;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 public class ConvolutionLayerTest {
 

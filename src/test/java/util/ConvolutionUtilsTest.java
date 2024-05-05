@@ -1,12 +1,8 @@
 package util;
 
 import org.apache.commons.math3.linear.RealMatrix;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-
-import static util.ArraysUtils.*;
+import util.model.Matrix3D;
 
 public class ConvolutionUtilsTest {
 
@@ -172,7 +168,7 @@ public class ConvolutionUtilsTest {
 
         int stride = 1;
 
-        double[][] wrapped2D = ConvolutionUtils.convolution2D(wrapping2, kernel, stride);
+        double[][] wrapped2D = ConvolutionUtils.convolution2DImmutable(wrapping2, kernel, stride);
 
 //        Assertions.assertEquals(1, wrapped2D.getMatrix3d().length);
 //        Assertions.assertEquals(2, wrapped2D.getDimension());
@@ -451,7 +447,7 @@ public class ConvolutionUtilsTest {
 
 //        Matrix3D wrapping3D = new Matrix3D(wrapping);
 
-        double[][] result = ConvolutionUtils.backMaxPooling2D(input, pool, 2, 2);
+        double[][] result = ConvolutionUtils.maxPooling2DForBack(input, pool, 2, 2);
         RealMatrix matrix = MatrixUtils.createInstance(result);
         MatrixUtils.printMatrixTest(matrix);
     }
@@ -520,7 +516,7 @@ public class ConvolutionUtilsTest {
         Matrix3D pooling3D = new Matrix3D(pool);
 
 
-        Matrix3D result = ConvolutionUtils.backMaxPooling3D(wrapping3D, pooling3D, 2, 2);
+        Matrix3D result = ConvolutionUtils.maxPooling3DForBack(wrapping3D, pooling3D, 2, 2);
 
         MatrixUtils.printMatrix3D(result);
     }
@@ -732,7 +728,7 @@ public class ConvolutionUtilsTest {
                 {2, 2, 2, 2}
         };
 
-        double[][] result = ConvolutionUtils.invertRowsAndColumns(filter4);
+        double[][] result = ArraysUtils.invertRowsAndColumnsImmutable(filter4);
 
         RealMatrix matrix = MatrixUtils.createInstance(result);
         MatrixUtils.printMatrixTest(matrix);

@@ -1,69 +1,144 @@
 package util;
 
-import org.apache.commons.math3.linear.RealMatrix;
-import util.task.Convolution;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import static util.ArraysUtils.*;
+import util.model.Matrix3D;
 
 public class ConvolutionUtils {
 
+    public static Matrix3D convolution(Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
+        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
+        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
+        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
 
-
-    public static Matrix3D wrap(Matrix3D input, Matrix3D kernel, int stride) {
-        double[][][] matrix3d = input.getMatrix3d();
-        double[][][] kernelArray = kernel.getMatrix3d();
-
-        Matrix3D result = new Matrix3D(   matrix3d.length,
-                                        (matrix3d[0].length - kernelArray[0].length)/stride + 1,
-                                        (matrix3d[0][0].length - kernelArray[0][0].length)/stride + 1);
-
-        for (int i = 0; i < matrix3d.length; i++) {
-            double[][] wrapped = wrap2d(matrix3d[i], kernelArray[i], stride);
-            result.setMatrix2d(wrapped, i);
+        for(int i = 0; i < kernels.length; i++){
+            double[][] current = convolution3D(input, kernels[i], biases[i], stride);
+            result.setMatrix2d(current, i);
         }
 
         return result;
     }
-    public static double[][] wrap2d(double[][] wrapping, double[][] kernel2d, int stride) {
-        int rowSize = (wrapping.length - kernel2d.length)/stride + 1;
-        int columnSize = (wrapping[0].length - kernel2d[0].length)/stride + 1;
-        double[][] wrapResult = new double[rowSize][columnSize];
+    public static double[][] convolution3D(Matrix3D input, Matrix3D kernel, double bias, int stride) {
+        double[][][] matrix3d = input.getMatrix3d();
+        double[][][] kernel3d = kernel.getMatrix3d();
 
-        for (int i = 0, wrapResultRow = 0; i < wrapping.length - kernel2d.length + 1; i += stride, wrapResultRow++) {
-            for (int j = 0, wrapResultColumn = 0; j < wrapping[0].length - kernel2d[0].length + 1; j += stride, wrapResultColumn++) {
-                double[][] doubles = multiplyByElement(getSubArray(wrapping,
-                                i,
-                                i + kernel2d.length - 1,
-                                j,
-                                j + kernel2d.length - 1),
-                        kernel2d);
+        int rowSize = (matrix3d[0].length - kernel3d[0].length) / stride + 1;
+        int columnSize = (matrix3d[0][0].length - kernel3d[0][0].length) / stride + 1;
 
-                wrapResult[wrapResultRow][wrapResultColumn] = summOfArray(doubles);
+        double[][] result = new double[rowSize][columnSize];
+
+        for (int i = 0; i < matrix3d.length; i++) {
+//            result = matrixAddition(result, convolution2D(matrix3d[i], kernel3d[i], stride));
+            ArraysUtils.arrayAdditionMutable(result, convolution2DImmutable(matrix3d[i], kernel3d[i], stride));
+        }
+//        result = addBias(result, bias);
+        ArraysUtils.scalarAdditionMutable(result, bias);
+        return result;
+    }
+    public static double[][] convolution2DImmutable(double[][] input, double[][] kernel2d, int stride) {
+        int rowSize = (input.length - kernel2d.length) / stride + 1;
+        int columnSize = (input[0].length - kernel2d[0].length) / stride + 1;
+        double[][] result = new double[rowSize][columnSize];
+        int ii = 0;
+        for (int i = 0; i < input.length - kernel2d.length + 1; i += stride) {
+            int jj = 0;
+            for (int j = 0; j < input[0].length - kernel2d.length + 1; j += stride) {
+                double sum = 0;
+                for (int k = 0; k < kernel2d.length; k++) {
+                    for (int l = 0; l < kernel2d[k].length; l++) {
+                        sum += input[i + k][j + l] * kernel2d[k][l];
+                    }
+                }
+                result[ii][jj] = sum;
+                jj++;
             }
+            ii++;
+        }
+        return result;
+    }
+    public static Matrix3D convolutionWithoutBiases(Matrix3D input, Matrix3D[] kernels, int stride) {
+        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
+        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
+        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
+
+        for(int i = 0; i < kernels.length; i++){
+            double[][] current = convolution3DWithoutBiases(input, kernels[i], stride);
+            result.setMatrix2d(current, i);
         }
 
-        return wrapResult;
+        return result;
     }
-    public static Matrix3D backMaxPooling3D(Matrix3D input, Matrix3D pool, int size, int stride){
+    public static double[][] convolution3DWithoutBiases(Matrix3D input, Matrix3D kernel, int stride) {
+        double[][][] matrix3d = input.getMatrix3d();
+        double[][][] kernel3d = kernel.getMatrix3d();
+
+        int rowSize = (matrix3d[0].length - kernel3d[0].length) / stride + 1;
+        int columnSize = (matrix3d[0][0].length - kernel3d[0][0].length) / stride + 1;
+
+        double[][] result = new double[rowSize][columnSize];
+
+        for (int i = 0; i < matrix3d.length; i++) {
+//            result = matrixAddition(result, convolution2D(matrix3d[i], kernel3d[i], stride));
+            ArraysUtils.arrayAdditionMutable(result, convolution2DImmutable(matrix3d[i], kernel3d[i], stride));
+        }
+        return result;
+    }
+    public static Matrix3D[] convolutionForBack(Matrix3D input, Matrix3D kernel, int stride) {
+        double[][][] kernel3d = kernel.getMatrix3d();
+        Matrix3D[] result = new Matrix3D[kernel3d.length];
+        for (int i = 0; i < kernel3d.length; i++) {
+            result[i] = convolution3DForBack(input, kernel3d[i], stride);
+        }
+        return result;
+    }
+    public static Matrix3D convolution3DForBack(Matrix3D input, double[][] kernel, int stride) {
+        double[][][] input3d = input.getMatrix3d();
+
+        int rowSize = (input3d[0].length - kernel.length) / stride + 1;
+        int columnSize = (input3d[0][0].length - kernel[0].length) / stride + 1;
+
+        double[][][] result = new double[input3d.length][rowSize][columnSize];
+
+        for (int i = 0; i < input3d.length; i++) {
+            result[i] = convolution2DImmutable(input3d[i], kernel, stride);
+        }
+
+        return new Matrix3D(result);
+    }
+    public static Matrix3D maxPooling3D(Matrix3D input, int size, int stride){
+        double[][][] input3d = input.getMatrix3d();
+        double[][][] result = new double[input3d.length]
+                                        [(input3d[0].length - size) / stride + 1]
+                                        [(input3d[0][0].length - size) / stride + 1];
+
+        for (int i = 0; i < input3d.length; i++){
+            result[i] = maxPooling2D(input3d[i], size, stride);
+        }
+        return new Matrix3D(result);
+    }
+    public static double[][] maxPooling2D(double[][] input, int size, int stride){
+        double [][] result = new double[(input.length - size) / stride + 1][(input[0].length - size) / stride + 1];
+        for (int i = 0; i < result.length; i++){
+            for (int j = 0; j < result[0].length; j++){
+                double max = Double.NEGATIVE_INFINITY;
+                for (int row = i * stride; row < i * stride + size; row++){
+                    for(int column = j * stride; column < j * stride + size; column++){
+                        max = Math.max(max, input[row][column]);
+                    }
+                }
+                result[i][j] = max;
+            }
+        }
+        return result;
+    }
+    public static Matrix3D maxPooling3DForBack(Matrix3D input, Matrix3D pool, int size, int stride){
         double[][][] input3d = input.getMatrix3d();
         double[][][] pool3d = pool.getMatrix3d();
         double[][][] result = new double[input3d.length][input3d[0].length][input3d[0][0].length];
         for (int i = 0; i < result.length;i++){
-            result[i] =  backMaxPooling2D(input3d[i], pool3d[i], 2, 2);
+            result[i] =  maxPooling2DForBack(input3d[i], pool3d[i], 2, 2);
         }
         return new Matrix3D(result);
     }
-
-    public static double[][] backMaxPooling2D(double[][] input, double[][] pool, int size, int stride){
+    public static double[][] maxPooling2DForBack(double[][] input, double[][] pool, int size, int stride){
         double [][] result = new double[input.length][input[0].length];
         for (int i = 0; i < pool.length; i++){
             for (int j = 0; j < pool[0].length; j++){
@@ -83,31 +158,6 @@ public class ConvolutionUtils {
             }
         }
         return result;
-    }
-    public static double[][] maxPooling2D(double[][] input, int size, int stride){
-        double [][] result = new double[(input.length - size) / stride + 1][(input[0].length - size) / stride + 1];
-        for (int i = 0; i < result.length; i++){
-            for (int j = 0; j < result[0].length; j++){
-                double max = Double.NEGATIVE_INFINITY;
-                for (int row = i * stride; row < i * stride + size; row++){
-                    for(int column = j * stride; column < j * stride + size; column++){
-                        max = Math.max(max, input[row][column]);
-                    }
-                }
-                result[i][j] = max;
-            }
-        }
-        return result;
-    }
-    public static Matrix3D maxPooling3D(Matrix3D input, int size, int stride){
-        double[][][] input3d = input.getMatrix3d();
-        double[][][] result = new double[input3d.length]
-                                        [(input3d[0].length - size) / stride + 1]
-                                        [(input3d[0][0].length - size) / stride + 1];
-        for (int i = 0; i < input3d.length; i++){
-            result[i] = maxPooling2D(input3d[i], size, stride);
-        }
-        return new Matrix3D(result);
     }
     public static Matrix3D zeroPadding(Matrix3D input, int count){
         double[][][] input3d = input.getMatrix3d();
@@ -135,153 +185,7 @@ public class ConvolutionUtils {
         }
         return new Matrix3D(result);
     }
-    public static double[][] matrixAddition(double[][] result, double[][] adding){
-        for (int i = 0; i < result.length; i++){
-            for (int j =0; j < result[0].length; j++){
-                result[i][j] = result[i][j] + adding[i][j];
-            }
-        }
-        return result;
-    }
-    public static double[][] addBias(double[][] result, double bias){
-        for (int i = 0; i < result.length; i++){
-            for (int j =0; j < result[0].length; j++){
-                result[i][j] += bias;
-            }
-        }
-        return result;
-    }
-    public static Matrix3D convolution(Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
-        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
-        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
-        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
-
-        for(int i = 0; i < kernels.length; i++){
-            double[][] current = convolution3D(input, kernels[i], biases[i], stride);
-            result.setMatrix2d(current, i);
-        }
-
-        return result;
-    }
-
-    public static Matrix3D convolutionWithoutBiases(Matrix3D input, Matrix3D[] kernels, int stride) {
-        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
-        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
-        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
-
-        for(int i = 0; i < kernels.length; i++){
-            double[][] current = convolution3DWithoutBiases(input, kernels[i], stride);
-            result.setMatrix2d(current, i);
-        }
-
-        return result;
-    }
-
-    public static double[][] convolution3DWithoutBiases(Matrix3D input, Matrix3D kernel, int stride) {
-        double[][][] matrix3d = input.getMatrix3d();
-        double[][][] kernel3d = kernel.getMatrix3d();
-
-        int rowSize = (matrix3d[0].length - kernel3d[0].length) / stride + 1;
-        int columnSize = (matrix3d[0][0].length - kernel3d[0][0].length) / stride + 1;
-
-        double[][] result = new double[rowSize][columnSize];
-
-        for (int i = 0; i < matrix3d.length; i++) {
-            result = matrixAddition(result, convolution2D(matrix3d[i], kernel3d[i], stride));
-        }
-        return result;
-    }
-
-    public static Matrix3D convolutionParallel(Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
-        int rowSize = (input.getMatrix3d()[0].length - kernels[0].getMatrix3d()[0].length) / stride + 1;
-        int columnSize = (input.getMatrix3d()[0][0].length - kernels[0].getMatrix3d()[0][0].length) / stride + 1;
-
-        Matrix3D result = new Matrix3D(kernels.length, rowSize, columnSize);
-
-        TaskUtils.makeTasks(convolutionParallelSplit(result, input, kernels, biases, stride));
-
-        return result;
-    }
-
-    public static List<Callable> convolutionParallelSplit(Matrix3D result, Matrix3D input, Matrix3D[] kernels, double[] biases, int stride) {
-        List<Callable> tasks = new ArrayList<>();
-
-        int threadCount = 10;
-        int taskCount = kernels.length / threadCount;
-
-        for (int i = 0; i < taskCount; i++) {
-            int indexStart = i * threadCount;
-            Callable task = new Convolution(result, indexStart, indexStart + threadCount - 1, input, kernels, biases, stride);
-            tasks.add(task);
-        }
-        return tasks;
-    }
-
-
-    public static double[][] convolution3D(Matrix3D input, Matrix3D kernel, double bias, int stride) {
-        double[][][] matrix3d = input.getMatrix3d();
-        double[][][] kernel3d = kernel.getMatrix3d();
-
-        int rowSize = (matrix3d[0].length - kernel3d[0].length) / stride + 1;
-        int columnSize = (matrix3d[0][0].length - kernel3d[0][0].length) / stride + 1;
-
-        double[][] result = new double[rowSize][columnSize];
-
-        for (int i = 0; i < matrix3d.length; i++) {
-            result = matrixAddition(result, convolution2D(matrix3d[i], kernel3d[i], stride));
-        }
-        result = addBias(result, bias);
-        return result;
-    }
-
-    public static Matrix3D[] convolutionForBack(Matrix3D input, Matrix3D kernel, int stride) {
-        double[][][] kernel3d = kernel.getMatrix3d();
-        Matrix3D[] result = new Matrix3D[kernel3d.length];
-        for (int i = 0; i < kernel3d.length; i++) {
-            result[i] = convolution3DForBack(input, kernel3d[i], stride);
-        }
-        return result;
-    }
-
-    public static Matrix3D convolution3DForBack(Matrix3D input, double[][] kernel, int stride) {
-            double[][][] input3d = input.getMatrix3d();
-
-            int rowSize = (input3d[0].length - kernel.length) / stride + 1;
-            int columnSize = (input3d[0][0].length - kernel[0].length) / stride + 1;
-
-            double[][][] result = new double[input3d.length][rowSize][columnSize];
-
-            for (int i = 0; i < input3d.length; i++) {
-                result[i] = convolution2D(input3d[i], kernel, stride);
-            }
-
-            return new Matrix3D(result);
-    }
-
-    public static double[][] convolution2D(double[][] input, double[][] kernel2d, int stride) {
-        int rowSize = (input.length - kernel2d.length) / stride + 1;
-        int columnSize = (input[0].length - kernel2d[0].length) / stride + 1;
-        double[][] result = new double[rowSize][columnSize];
-        int ii = 0;
-        for (int i = 0; i < input.length - kernel2d.length + 1; i += stride) {
-            int jj = 0;
-            for (int j = 0; j < input[0].length - kernel2d.length + 1; j += stride) {
-                double sum = 0;
-                for (int k = 0; k < kernel2d.length; k++) {
-                    for (int l = 0; l < kernel2d[k].length; l++) {
-                        sum += input[i + k][j + l] * kernel2d[k][l];
-                    }
-                }
-                result[ii][jj] = sum;
-                jj++;
-            }
-            ii++;
-        }
-        return result;
-    }
-
     public static Matrix3D[] swapFilters(Matrix3D[] filters) {
-//        System.out.println(filters[0].getMatrix3d().length);
         double[][][] filter3d = filters[0].getMatrix3d();
         Matrix3D[] swappedFilters = new Matrix3D[filters[0].getMatrix3d().length];
 
@@ -289,38 +193,15 @@ public class ConvolutionUtils {
             swappedFilters[i] = new Matrix3D(filters.length, filter3d[0].length, filter3d[0][0].length);
             for (int j = 0; j < filters.length; j++) {
                 //равно вызову функции, которая развернет фильтр
-                swappedFilters[i].getMatrix3d()[j] = invertRowsAndColumns(filters[j].getMatrix3d()[i]);
+//                swappedFilters[i].getMatrix3d()[j] = invertRowsAndColumns(filters[j].getMatrix3d()[i]);
+                swappedFilters[i].getMatrix3d()[j] = ArraysUtils.invertRowsAndColumnsImmutable(filters[j].getMatrix3d()[i]);
             }
         }
 
         return swappedFilters;
     }
-
-    public static double[][] invertRowsAndColumns(double[][] matrix) {
-        double[][] result = new double[matrix.length][matrix[0].length];
-
-        for (int i1 = result.length - 1, i2 = 0; i1 >= 0; i1--, i2++) {
-            for (int j1 = result[0].length - 1, j2 = 0; j1 >= 0; j1--, j2++) {
-                result[i1][j1] = matrix[i2][j2];
-            }
-        }
-
-        return result;
-    }
-
     public static double[] sumForBiases(Matrix3D input) {
-        double[][][] input3D = input.getMatrix3d();
-        double[] result = new double[input3D.length];
-        for(int i = 0; i < input3D.length; i++) {
-            double sum = 0;
-            for(int j = 0; j < input3D[0].length; j++) {
-                for(int k = 0; k < input3D[0][0].length; k++) {
-                     sum += input3D[i][j][k];
-                }
-            }
-            result[i] = sum;
-        }
-        return result;
+        return Matrix3DUtils.sumsOfEachChannelImmutable(input);
     }
 
 }

@@ -1,12 +1,9 @@
 
 import org.apache.commons.math3.linear.RealMatrix;
-import util.ConvolutionUtils;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix4d;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;

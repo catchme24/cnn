@@ -2,12 +2,10 @@ package network.model;
 
 import function.ReLu;
 import function.Softmax;
-import network.TrainableNetwork;
-import network.builder.NetworkBuilder;
 import network.layer.*;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;

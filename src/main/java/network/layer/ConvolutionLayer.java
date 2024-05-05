@@ -2,14 +2,10 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import util.ConvolutionParallelUtils;
 import util.ConvolutionUtils;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @Slf4j
 public class ConvolutionLayer implements Layer3D {
@@ -135,7 +131,15 @@ public class ConvolutionLayer implements Layer3D {
 //        System.out.println(kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
 
         preActivation = inputTensor.copy();
-        Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
+//        System.out.println("Forward: " + outputDimension);
+//        System.out.println("Входной тензон: " + inputTensor.getMatrix3d().length + "x" + inputTensor.getMatrix3d()[0].length + "x" + inputTensor.getMatrix3d()[0][0].length);
+//        System.out.println("Кернелы: " + kernels.length + "x" + kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
+//        Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
+
+
+        Matrix3D result = ConvolutionParallelUtils.convolutionParallel(inputTensor, kernels, biases, outputDimension.getStride(), 12);
+
+
         postActivation = result.copy();
         return result;
     }
@@ -143,7 +147,14 @@ public class ConvolutionLayer implements Layer3D {
     @Override
     public Matrix3D propogateBackward(Matrix3D localGradient) {
 
-        kernelsGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
+//        System.out.println("Backward: " + outputDimension);
+//        System.out.println("convolutionForBack: ");
+//        System.out.println("Преактивация тензон: " + preActivation.getMatrix3d().length + "x" + preActivation.getMatrix3d()[0].length + "x" + preActivation.getMatrix3d()[0][0].length);
+//        System.out.println("Локальный градиент: " + localGradient.getMatrix3d().length + "x" + localGradient.getMatrix3d()[0].length + "x" + localGradient.getMatrix3d()[0][0].length);
+//        kernelsGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
+
+        kernelsGradient = ConvolutionParallelUtils.convolutionForBackParallel(preActivation, localGradient, outputDimension.getStride(), 16);
+
 
         biasesGradient = ConvolutionUtils.sumForBiases(localGradient);
 
@@ -152,12 +163,19 @@ public class ConvolutionLayer implements Layer3D {
         if(outputDimension.getStride() == 1){
             //Формула без Dilate(s-1)
             errorTensor = ConvolutionUtils.zeroPadding(localGradient, outputDimension.getHeightKernel() -1);
-            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+//            System.out.println("convolutionWithOutBaises: ");
+//            System.out.println("Тензор ошибки: " + localGradient.getMatrix3d().length + "x" + localGradient.getMatrix3d()[0].length + "x" + localGradient.getMatrix3d()[0][0].length);
+//            System.out.println("Свапнутые кернелы: " + swappedKernels.length + "x" + swappedKernels[0].getMatrix3d().length + "x" + swappedKernels[0].getMatrix3d()[0].length + "x" + swappedKernels[0].getMatrix3d()[0][0].length);
+//            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+
+            errorTensor = ConvolutionParallelUtils.convolutionWithoutBaisesParallel(errorTensor, swappedKernels, 1, 12);
         } else {
             //Формула c Dilate(s-1)
             errorTensor = ConvolutionUtils.dilate(localGradient, outputDimension.getStride() - 1);
             errorTensor = ConvolutionUtils.zeroPadding(errorTensor, outputDimension.getHeightKernel() -1);
-            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+//            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
+
+            errorTensor = ConvolutionParallelUtils.convolutionWithoutBaisesParallel(errorTensor, swappedKernels, 1, 12);
         }
         return errorTensor;
     }

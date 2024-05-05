@@ -5,6 +5,7 @@ import data.Dataset;
 import function.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
+import network.model.NetworkModel;
 import optimizer.Optimizer;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
@@ -142,6 +143,11 @@ public class Perceptron implements TrainableNetwork {
     @Override
     public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
 
+    }
+
+    @Override
+    public NetworkModel getNetworkModel() {
+        return getNetworkModel();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package network.layer;
 
 import org.junit.jupiter.api.Test;
-import util.Matrix3D;
+import util.model.Matrix3D;
 import util.MatrixUtils;
 
 import javax.imageio.ImageIO;
