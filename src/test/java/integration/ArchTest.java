@@ -99,9 +99,13 @@ public class ArchTest {
 //        String validPath = "C:\\cifar10_50\\valid";
 //        String testPath = "C:\\cifar10_50\\test";
 
-        String trainPath = "D:\\cifar10_10\\train";
-        String validPath = "D:\\cifar10_10\\valid";
-        String testPath = "D:\\cifar10_10\\test";
+        String trainPath = "D:\\cifar10_50\\cifar10_50\\train";
+        String validPath = "D:\\cifar10_50\\cifar10_50\\valid";
+        String testPath = "D:\\cifar10_50\\cifar10_50\\test";
+
+//        String trainPath = "D:\\cifar10_1000\\train";
+//        String validPath = "D:\\cifar10_1000\\valid";
+//        String testPath = "D:\\cifar10_1000\\test";
 
         File train = new File(trainPath);
         File valid = new File(validPath);
@@ -130,7 +134,7 @@ public class ArchTest {
                 .append(new Flatten())
                 .append(new FullyConnected(1024))
                 .append(new ActivationLayer(new ReLu()))
-                .append(new DropoutLayer(0.3))
+//                .append(new DropoutLayer(0.3))
                 .append(new FullyConnected(128))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(10))
@@ -140,7 +144,6 @@ public class ArchTest {
 
 
         network.learn(1, 1, dataset);
-
     }
 
 

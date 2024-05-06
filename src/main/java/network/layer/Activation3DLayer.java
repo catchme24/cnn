@@ -63,15 +63,10 @@ public class Activation3DLayer implements Layer3D {
 
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
-//        log.debug("Activation3DLayer layer: Start propogateForward with:");
-//        MatrixUtils.printMatrix3D(inputTensor);
 
         preActivation = inputTensor.copy();
-        //Высчитывает сигнал с оффсетом, если он установлен
         Matrix3D outputTensor = activationFunc.calculate(inputTensor);
-//        postActivation = outputTensor;
-//        log.debug("Activation3DLayer layer: End propogateForward with:");
-//        MatrixUtils.printMatrix3D(outputTensor);
+
         return outputTensor;
     }
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import util.ConvolutionParallelUtils;
 import util.ConvolutionUtils;
+import util.Matrix3DUtils;
 import util.model.Matrix3D;
 import util.MatrixUtils;
 
@@ -136,9 +137,7 @@ public class ConvolutionLayer implements Layer3D {
 //        System.out.println("Кернелы: " + kernels.length + "x" + kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
 //        Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
 
-
         Matrix3D result = ConvolutionParallelUtils.convolutionParallel(inputTensor, kernels, biases, outputDimension.getStride(), 12);
-
 
         postActivation = result.copy();
         return result;
@@ -155,6 +154,7 @@ public class ConvolutionLayer implements Layer3D {
 
         kernelsGradient = ConvolutionParallelUtils.convolutionForBackParallel(preActivation, localGradient, outputDimension.getStride(), 16);
 
+//        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
 
         biasesGradient = ConvolutionUtils.sumForBiases(localGradient);
 
@@ -192,12 +192,19 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public void correctWeights(double learnRate) {
+        System.out.println("ПЕРВЫЙ КЕРНЕЛ");
+        Matrix3DUtils.printMatrix3D(kernels[0]);
+        System.out.println("ГРАДИЕНТЫ ВЕСОВ");
+        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
         for (int i = 0; i < kernels.length; i++){
             MatrixUtils.subtract(kernels[i], kernelsGradient[i], learnRate);
         }
         for(int i = 0; i < biases.length; i++){
             biases[i] -= biasesGradient[i] * learnRate;
         };
+
+//        System.out.println("СКОРЕКТИРОВАННЫЕ ВЕСА");
+//        Matrix3DUtils.printMatrix3D(kernels[0]);
     }
 
     @Override

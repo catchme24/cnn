@@ -1,6 +1,9 @@
 package function;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import util.MatrixUtils;
+
+import java.sql.SQLOutput;
 
 public class DefaultAccuracyFunction {
 
@@ -17,6 +20,8 @@ public class DefaultAccuracyFunction {
 //    }
 
     public void calculate(int labelNumber, RealMatrix result) {
+        System.out.println("Номер класс: " + labelNumber + ", в прямом вектор получился: ");
+        MatrixUtils.printMatrixTest(result);
         countOfExamples++;
         double max = result.getEntry(0, 0);
         int indexMax = 0;
@@ -36,6 +41,8 @@ public class DefaultAccuracyFunction {
             throw new RuntimeException("Делим на ноль:)");
         }
         double accuracy = (countOfTrueExamples / countOfExamples);
+        System.out.println("Всего примеров: " + countOfExamples);
+        System.out.println("Правильных: " + countOfTrueExamples);
         countOfTrueExamples = 0;
         countOfExamples = 0;
         return accuracy;

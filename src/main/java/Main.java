@@ -42,6 +42,11 @@ public class Main {
             RealMatrix matrix = MatrixUtils.createInstance(dataFrameArray[i]);
             MatrixUtils.printMatrixTest(matrix);
         }
+
+        double weight = 0.0123121;
+        double x1 = 0.0;
+        double x2 = 0.1;
+        System.out.println(weight - x1 * x2);
     }
 
     public static Matrix3D getDataFrame(BufferedImage image) {

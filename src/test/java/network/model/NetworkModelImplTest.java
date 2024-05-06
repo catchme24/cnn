@@ -83,10 +83,11 @@ public class NetworkModelImplTest {
 
         RealMatrix oneHotEncodingVector = MatrixUtils.createEmptyVector(10);
         oneHotEncodingVector.setEntry(0, 0, 1.0);
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 1; i++){
             RealMatrix object = (RealMatrix) networkModel.propogateForward(dataFrame);
             RealMatrix error = object.subtract(oneHotEncodingVector);
             networkModel.propogateBackward(error);
+            networkModel.correctWeights(1);
             System.out.println(i);
         }
 

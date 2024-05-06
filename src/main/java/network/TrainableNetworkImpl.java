@@ -6,6 +6,7 @@ import function.DefaultAccuracyFunction;
 import function.DefaultLossFunction;
 import network.model.NetworkModel;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.Matrix3DUtils;
 import util.model.Matrix3D;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class TrainableNetworkImpl extends AbstractTrainableNetwork {
                 loss.calculate(trainData.get(j).getGroundTruth(), forward);
                 accuracy.calculate(trainData.get(j).getLabelNumber(), forward);
                 Matrix3D backward = (Matrix3D) networkModel.propogateBackward(error);
-                networkModel.correctWeights(0.001);
+                networkModel.correctWeights(0.1);
                 System.out.println("Эпоха " + (i+1) + ": " + (j+1)+" обучающий пример из " + trainData.size());
             }
 

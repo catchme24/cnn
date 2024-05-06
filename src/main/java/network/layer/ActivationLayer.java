@@ -63,11 +63,18 @@ public class ActivationLayer implements Layer2D {
         }
 
         preActivation = inputVector.copy();
-        //Высчитывает сигнал с оффсетом, если он установлен
         RealMatrix output = activationFunc.calculate(inputVector);
         postActivation = output.copy();
-        log.debug("ActivationLayer: End propogateForward with:");
-        MatrixUtils.printMatrix(output);
+
+//        //Размеры
+//        System.out.println("Forward " + this.getClass().getName() + " " + dimension);
+//        //Значения
+//        System.out.println("-----------ЗНАЧЕНИЯ-----------");
+//        System.out.println("Входной вектор: ");
+//        MatrixUtils.printMatrixTest(inputVector.getSubMatrix(0, 9, 0, 0));
+//        System.out.println("Активированный:");
+//        MatrixUtils.printMatrixTest(postActivation.getSubMatrix(0, 9, 0, 0));
+
         return output;
     }
 
@@ -88,22 +95,13 @@ public class ActivationLayer implements Layer2D {
 
     @Override
     public RealMatrix propogateBackward(RealMatrix errorVector) {
-        log.debug("ActivationLayer: Start propogateBackward with error vector:");
-        MatrixUtils.printMatrix(errorVector);
-
-        log.debug("ActivationLayer: preActivation vector:");
-        MatrixUtils.printMatrix(preActivation);
 
         RealMatrix localGradients;
+        RealMatrix derivation = null;
 
         if (!(activationFunc instanceof Softmax)) {
-            RealMatrix derivation = activationFunc.calculateDerivation(preActivation);
-
-            log.debug("ActivationLayer: derivations vector:");
-            MatrixUtils.printMatrix(derivation);
-
+            derivation = activationFunc.calculateDerivation(preActivation);
             localGradients = derivation.copy();
-
             for (int i = 0; i < errorVector.getRowDimension(); i++) {
                 localGradients.setEntry(i,
                         0,
@@ -113,8 +111,19 @@ public class ActivationLayer implements Layer2D {
             localGradients = errorVector.copy();
         }
 
-        log.debug("ActivationLayer: End propogate Backward with local gradient:");
-        MatrixUtils.printMatrix(localGradients);
+//        //Размеры
+//        System.out.println("Backward " + this.getClass().getName() + " " + dimension);
+//        //Значения
+//        System.out.println("-----------ЗНАЧЕНИЯ-----------");
+//        if (!(activationFunc instanceof Softmax)) {
+//            System.out.println("Производные");
+//            MatrixUtils.printMatrixTest(derivation.getSubMatrix(0, 9, 0, 0));
+//        }
+//        System.out.println("Пре активация");
+//        MatrixUtils.printMatrixTest(preActivation.getSubMatrix(0, 9, 0, 0));
+//        System.out.println("Еррор вектор");
+//        MatrixUtils.printMatrixTest(errorVector.getSubMatrix(0, 9, 0, 0));
+
         return localGradients;
     }
 

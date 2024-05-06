@@ -67,6 +67,14 @@ public class ArraysUtils {
         return reuslt;
     }
 
+    public static double[] hadamardImmutable(double[] input, double[] multiplier) {
+        double[] reuslt = new double[input.length];
+        for (int i = 0; i < input.length; i++) {
+            reuslt[i] = input[i] * multiplier[i];
+        }
+        return reuslt;
+    }
+
     public static double[][] invertRowsAndColumnsImmutable(double[][] input) {
         double[][] result = new double[input.length][input[0].length];
 
@@ -85,6 +93,14 @@ public class ArraysUtils {
             for (int j = 0; j < matrix1[0].length; j++) {
                 summ += matrix1[i][j];
             }
+        }
+        return summ;
+    }
+
+    public static double summOfArray(double[] input) {
+        double summ = 0;
+        for (int i = 0; i < input.length; i++) {
+            summ += input[i];
         }
         return summ;
     }

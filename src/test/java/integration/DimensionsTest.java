@@ -45,7 +45,7 @@ public class DimensionsTest {
                 .append(new Flatten())
                 .append(new FullyConnected(1024))
                 .append(new ActivationLayer(new ReLu()))
-                .append(new DropoutLayer(0.3))
+//                .append(new DropoutLayer(0.3))
                 .append(new FullyConnected(128))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(10))
@@ -54,8 +54,10 @@ public class DimensionsTest {
                 .build();
 
         NetworkModel networkModel = trainableNetwork.getNetworkModel();
-        RealMatrix result = (RealMatrix) networkModel.propogateForward(wrapping3D);
-        networkModel.propogateBackward(result);
+
+        RealMatrix forward = (RealMatrix) networkModel.propogateForward(wrapping3D);
+        RealMatrix error = forward.subtract(MatrixUtils.createOneHotEncoding(1, 10));
+        Matrix3D backward = (Matrix3D) networkModel.propogateBackward(error);
     }
 
 

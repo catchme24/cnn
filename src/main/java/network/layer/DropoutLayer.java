@@ -57,9 +57,6 @@ public class DropoutLayer implements Layer2D {
 
     @Override
     public RealMatrix propogateForward(RealMatrix inputVector) {
-        log.debug("DropoutLayer: Start propogateForward with:");
-        MatrixUtils.printMatrix(inputVector);
-
         //CHECK
         this.dropoutVector = MatrixUtils.createVectorWithSameValue(dimension.getHeightTens(), 1);
         MatrixUtils.fillDropout(dropoutVector, dropout);
@@ -70,15 +67,11 @@ public class DropoutLayer implements Layer2D {
             outputVector.setEntry(i, 0, inputVector.getEntry(i, 0) * dropoutVector.getEntry(i, 0));
         }
 
-        log.debug("DropoutLayer: End propogateForward with:");
-        MatrixUtils.printMatrix(outputVector);
         return outputVector;
     }
 
     @Override
     public RealMatrix propogateBackward(RealMatrix errorVector) {
-        log.debug("DropoutLayer: Start propogateForward with:");
-        MatrixUtils.printMatrix(errorVector);
 
         //CHECK
         this.dropoutVector = MatrixUtils.createVectorWithSameValue(dimension.getHeightTens(), 1);
@@ -89,9 +82,6 @@ public class DropoutLayer implements Layer2D {
         for (int i = 0; i < localGradients.getRowDimension(); i++) {
             localGradients.setEntry(i, 0, errorVector.getEntry(i, 0) * dropoutVector.getEntry(i, 0));
         }
-
-        log.debug("DropoutLayer: End propogateForward with:");
-        MatrixUtils.printMatrix(localGradients);
         return localGradients;
     }
 
@@ -109,8 +99,6 @@ public class DropoutLayer implements Layer2D {
     public void correctWeights(double learnRate) {
 
     }
-
-
 
     @Override
     public Dimension getSize() {

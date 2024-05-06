@@ -90,4 +90,21 @@ public class MatrixUtilsTest {
         System.out.println(MatrixUtils.getRandomNumber(10, 100));
     }
 
+    @Test
+    public void hadamard() {
+        Matrix3D input = new Matrix3D(3, 3, 3);
+        Matrix3D multiplier = new Matrix3D(3, 3, 3);
+
+        Matrix3DUtils.fillRandom(input);
+        Matrix3DUtils.fillRandom(multiplier);
+
+        Matrix3DUtils.printMatrix3D(input);
+        System.out.println("------------------");
+        Matrix3DUtils.printMatrix3D(multiplier);
+
+        Matrix3D result = MatrixUtils.hadamard(input, multiplier);
+        System.out.println("------------------");
+        Matrix3DUtils.printMatrix3D(result);
+    }
+
 }
