@@ -2,6 +2,7 @@ package network.model;
 
 import network.layer.Layer;
 
+import java.io.File;
 import java.util.Deque;
 
 public class NetworkModelImpl extends AbstractNetworkModel {
@@ -17,4 +18,5 @@ public class NetworkModelImpl extends AbstractNetworkModel {
             prev = layer;
         }
     }
+
 }

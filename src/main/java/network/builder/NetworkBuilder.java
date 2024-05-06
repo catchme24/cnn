@@ -26,11 +26,15 @@ public class NetworkBuilder {
         return this;
     }
 
+    public TrainableNetwork build(File logsFile, File saveFile, boolean need) {
+        return new TrainableNetworkImpl(new NetworkModelImpl(layers), logsFile, saveFile);
+    }
+
     public TrainableNetwork build() {
-        return new TrainableNetworkImpl(new NetworkModelImpl(layers));
+        return new TrainableNetworkImpl(new NetworkModelImpl(layers), null, null);
     }
 
     public TrainableNetwork build(File file) {
-        return new TrainableNetworkImpl(new FileNetworkModel(layers, file));
+        return new TrainableNetworkImpl(new FileNetworkModel(layers, file), null, null);
     }
 }

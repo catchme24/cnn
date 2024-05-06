@@ -20,7 +20,7 @@ public class DefaultLossFunction implements LossFunc {
         countOfExamples++;
         double lossOfSample = 0;
         for (int i = 0; i < oneHot.getRowDimension(); i++) {
-            lossOfSample = lossOfSample + Math.log(result.getEntry(i, 0)) * oneHot.getEntry(i, 0);
+            lossOfSample = lossOfSample - oneHot.getEntry(i, 0) * Math.log(result.getEntry(i, 0));
         }
         loss = loss + lossOfSample;
     }

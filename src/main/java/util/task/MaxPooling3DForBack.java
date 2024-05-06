@@ -38,10 +38,10 @@ public class MaxPooling3DForBack implements Callable<Matrix3D> {
 
         double[][][] result3d = result.getMatrix3d();
         double[][][] input3d = input.getMatrix3d();
-        double[][][] pool3d = input.getMatrix3d();
+        double[][][] pool3d = pool.getMatrix3d();
 
         for (int i = indexStart; i <= indexEnd;i++){
-            result3d[i] =  ConvolutionUtils.maxPooling2DForBack(input3d[i], pool3d[i], 2, 2);
+            result3d[i] =  ConvolutionUtils.maxPooling2DForBack(input3d[i], pool3d[i], size, stride);
         }
 
         return result;

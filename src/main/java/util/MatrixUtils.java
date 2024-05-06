@@ -32,7 +32,7 @@ public class MatrixUtils {
         for(int i = 0; i < array3D.length; i++) {
             for(int j = 0; j < array3D[0].length; j++) {
                 for(int k = 0; k < array3D[0][0].length; k++) {
-                    array3D[i][j][k] = random.nextDouble() * 2 - 1;
+                    array3D[i][j][k] = random.nextGaussian();;
                 }
             }
         }
@@ -104,9 +104,12 @@ public class MatrixUtils {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 Color c = new Color(dataBuffInt[i * w + j]);
-                red[i][j] =  c.getRed() / 255.0;
-                green[i][j] = c.getGreen() / 255.0;
-                blue[i][j] = c.getBlue() / 255.0;
+                red[i][j] =  c.getRed();
+                green[i][j] = c.getGreen();
+                blue[i][j] = c.getBlue();
+//                red[i][j] =  c.getRed() / 255.0;
+//                green[i][j] = c.getGreen() / 255.0;
+//                blue[i][j] = c.getBlue() / 255.0;
             }
         }
         result.setMatrix2d(red, 0);
@@ -202,7 +205,7 @@ public class MatrixUtils {
 
     public static double[] fillRandom(double [] input) {
         for(int i = 0; i < input.length; i++) {
-            input[i] = random.nextDouble() * 2 - 1;
+            input[i] = random.nextGaussian();;
         }
         return input;
     }
@@ -210,7 +213,7 @@ public class MatrixUtils {
     public static RealMatrix fillRandom(RealMatrix matrix) {
         for(int i = 0; i < matrix.getRowDimension(); i++) {
             for(int j = 0; j < matrix.getColumnDimension(); j++) {
-                matrix.setEntry(i, j, random.nextDouble() * 2 - 1);
+                matrix.setEntry(i, j, random.nextGaussian());
             }
         }
         return matrix;

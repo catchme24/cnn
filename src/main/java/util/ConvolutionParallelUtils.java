@@ -1,10 +1,7 @@
 package util;
 
 import util.model.Matrix3D;
-import util.task.Convolution;
-import util.task.ConvolutionForBack;
-import util.task.ConvolutionWithoutBaises;
-import util.task.MaxPooling3D;
+import util.task.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,14 +223,14 @@ public class ConvolutionParallelUtils {
         int indexStart = 0;
         for (int i = 0; i < threadCount; i++) {
             indexStart = i * itemsPerThread;
-            Callable task = new MaxPooling3D(result, indexStart, indexStart + itemsPerThread - 1, input, size, stride);
+            Callable task = new MaxPooling3DForBack(result, indexStart, indexStart + itemsPerThread - 1, input, pool, size, stride);
             tasks.add(task);
         }
 
         if (result3d.length % threads != 0) {
 //            System.out.println("ДОБАВИЛ");
             indexStart = indexStart + itemsPerThread - 1;
-            Callable task = new MaxPooling3D(result, indexStart, indexStart + lastTaskCountKernels, input, size, stride);
+            Callable task = new MaxPooling3DForBack(result, indexStart, indexStart + lastTaskCountKernels, input, pool, size, stride);
             tasks.add(task);
         }
         return tasks;

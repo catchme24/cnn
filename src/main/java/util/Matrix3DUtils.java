@@ -19,7 +19,7 @@ public class Matrix3DUtils {
         for(int i = 0; i < array3D.length; i++) {
             for(int j = 0; j < array3D[0].length; j++) {
                 for(int k = 0; k < array3D[0][0].length; k++) {
-                    array3D[i][j][k] = random.nextDouble() * 2 - 1;
+                    array3D[i][j][k] = random.nextGaussian();
                 }
             }
         }

@@ -90,10 +90,9 @@ public class ConvolutionLayer implements Layer3D {
             kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
                     this.outputDimension.getHeightKernel(),
                     this.outputDimension.getWidthKernel()),
-                    outputDimension.getHeightTens() * outputDimension.getWidthTens() * outputDimension.getChannel());
+                    inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
         }
-        MatrixUtils.fillHeNormal(biases,
-                outputDimension.getHeightTens() * outputDimension.getWidthTens() * outputDimension.getChannel());
+        MatrixUtils.fillHeNormal(biases, inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
     }
 
     @Override
@@ -192,10 +191,10 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public void correctWeights(double learnRate) {
-        System.out.println("ПЕРВЫЙ КЕРНЕЛ");
-        Matrix3DUtils.printMatrix3D(kernels[0]);
-        System.out.println("ГРАДИЕНТЫ ВЕСОВ");
-        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
+//        System.out.println("ПЕРВЫЙ КЕРНЕЛ");
+//        Matrix3DUtils.printMatrix3D(kernels[0]);
+//        System.out.println("ГРАДИЕНТЫ ВЕСОВ");
+//        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
         for (int i = 0; i < kernels.length; i++){
             MatrixUtils.subtract(kernels[i], kernelsGradient[i], learnRate);
         }

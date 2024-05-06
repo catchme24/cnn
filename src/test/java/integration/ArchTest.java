@@ -138,12 +138,67 @@ public class ArchTest {
                 .append(new FullyConnected(128))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(10))
-                .append(new ActivationLayer(new ReLu()))
+//                .append(new ActivationLayer(new ReLu()))
                 .append(new ActivationLayer(new Softmax()))
                 .build();
 
 
-        network.learn(1, 1, dataset);
+        network.learn(10, 1, dataset);
+    }
+
+    @Test
+    public void testArchitecturePizdzhjenaya() throws IOException {
+//        String trainPath = "C:\\cifar10_50\\train";
+//        String validPath = "C:\\cifar10_50\\valid";
+//        String testPath = "C:\\cifar10_50\\test";
+
+        String trainPath = "D:\\cifar10_50\\train";
+        String validPath = "D:\\cifar10_50\\valid";
+        String testPath = "D:\\cifar10_50\\test";
+
+        String logsPath = "D:\\logs.txt";
+        String savePath = "D:\\network.txt";
+
+//        String trainPath = "D:\\cifar10_1000\\train";
+//        String validPath = "D:\\cifar10_1000\\valid";
+//        String testPath = "D:\\cifar10_1000\\test";
+
+        File train = new File(trainPath);
+        File valid = new File(validPath);
+        File test = new File(testPath);
+        File logs = new File(logsPath);
+        File save = new File(savePath);
+
+        MyDatasetParser myDatasetParser = new MyDatasetParser();
+
+        DatasetHelperImpl<Matrix3D, RealMatrix> helper = new DatasetHelperImpl<>();
+        Dataset<Matrix3D, RealMatrix> dataset = helper.prepareDataset(train, valid, test, myDatasetParser);
+
+
+        Dimension imageDimension = new Dimension(3, 32, 32);
+
+        TrainableNetwork network = NetworkBuilder.builder()
+                .append(new ConvolutionLayer(32, 3, 1, imageDimension))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(32, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new PoolingLayer(2, 2))
+                .append(new ConvolutionLayer(64, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new ConvolutionLayer(64, 3, 1))
+                .append(new Activation3DLayer(new ReLu()))
+                .append(new PoolingLayer(2, 2))
+                .append(new Flatten())
+                .append(new FullyConnected(512))
+                .append(new ActivationLayer(new ReLu()))
+//                .append(new DropoutLayer(0.3))
+                .append(new FullyConnected(10))
+//                .append(new ActivationLayer(new ReLu()))
+                .append(new ActivationLayer(new Softmax()))
+                .build(logs, save, true);
+
+        network.learn(25, 1, dataset);
+        network.test(dataset);
     }
 
 

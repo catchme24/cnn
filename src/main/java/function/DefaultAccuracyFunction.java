@@ -20,8 +20,8 @@ public class DefaultAccuracyFunction {
 //    }
 
     public void calculate(int labelNumber, RealMatrix result) {
-        System.out.println("Номер класс: " + labelNumber + ", в прямом вектор получился: ");
-        MatrixUtils.printMatrixTest(result);
+//        System.out.println("Номер класс: " + labelNumber + ", в прямом вектор получился: ");
+//        MatrixUtils.printMatrixTest(result);
         countOfExamples++;
         double max = result.getEntry(0, 0);
         int indexMax = 0;

@@ -1,6 +1,7 @@
 package network.model;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import network.layer.Dimension;
 import network.layer.Layer;
 import network.layer.Layer2D;
@@ -8,10 +9,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
 import java.io.*;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractNetworkModel implements NetworkModel {
 
@@ -49,19 +47,30 @@ public abstract class AbstractNetworkModel implements NetworkModel {
         }
     }
 
-//    @Override
-//    public void buildFromFile(File file) {
-//        Gson gson = new Gson();
-//
-//        String bigObject = null;
-//
-//        Deque<Layer> layers = new LinkedList<>();
-//        Dimension imageDimension = new Dimension(3, 32, 32);
-//
-//        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)))) {
-//            bigObject = br.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @Override
+    public boolean saveInFile(File file) {
+        Gson gson = new GsonBuilder()
+                .create();
+
+        List<String> stringLayers = new ArrayList<>();
+
+        for (Layer layer : layers) {
+            layer.unchain();
+        }
+
+        for (Layer layer : layers) {
+            stringLayers.add(gson.toJson(layer));
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath())))) {
+            for (String stringLayer: stringLayers) {
+                bw.write(stringLayer);
+                bw.newLine();
+                bw.flush();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
 }

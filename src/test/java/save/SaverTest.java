@@ -177,7 +177,7 @@ public class SaverTest {
         layers.add(new ActivationLayer(new ReLu()));
         layers.add(new ActivationLayer(new Softmax()));
 
-        TrainableNetworkImpl network = new TrainableNetworkImpl(new NetworkModelImpl(layers));
+        TrainableNetworkImpl network = new TrainableNetworkImpl(new NetworkModelImpl(layers), null, null);
 
         network.learn(1, 1 , null);
 

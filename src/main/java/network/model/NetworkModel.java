@@ -10,6 +10,8 @@ public interface NetworkModel {
 
 //    void buildFromFile(File file);
 
+    boolean saveInFile(File file);
+
     void correctWeights(double learnRate);
 
 }

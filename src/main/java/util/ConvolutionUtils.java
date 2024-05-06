@@ -133,8 +133,9 @@ public class ConvolutionUtils {
         double[][][] input3d = input.getMatrix3d();
         double[][][] pool3d = pool.getMatrix3d();
         double[][][] result = new double[input3d.length][input3d[0].length][input3d[0][0].length];
-        for (int i = 0; i < result.length;i++){
-            result[i] =  maxPooling2DForBack(input3d[i], pool3d[i], 2, 2);
+        for (int i = 0; i < result.length;i++) {
+//            result[i] =  maxPooling2DForBack(input3d[i], pool3d[i], 2, 2);
+            result[i] =  maxPooling2DForBack(input3d[i], pool3d[i], size, stride);
         }
         return new Matrix3D(result);
     }

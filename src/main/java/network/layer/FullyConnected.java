@@ -49,8 +49,8 @@ public class FullyConnected implements Layer2D {
     @Override
     public void initWeight() {
         weights = MatrixUtils.createInstance(inputDimension.getHeightTens(), outputDimension.getHeightTens());
-        MatrixUtils.fillHeNormal(baises, outputDimension.getHeightTens());
-        MatrixUtils.fillHeNormal(weights, outputDimension.getHeightTens());
+        MatrixUtils.fillHeNormal(baises, inputDimension.getHeightTens());
+        MatrixUtils.fillHeNormal(weights, inputDimension.getHeightTens());
 //        System.out.println("Инициализированные веса:");
 //        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 0));
 
