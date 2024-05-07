@@ -8,9 +8,7 @@ import java.io.IOException;
 public interface NetworkModel<T, D> {
 
     D propogateForward(T input);
-
     T propogateBackward(D input);
-
     boolean saveInFile(File file);
     void correctWeights(Optimizer optimizer);
 }

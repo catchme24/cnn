@@ -1,13 +1,18 @@
 package network;
 
 import data.Dataset;
+import function.ErrorFunc;
 import function.loss.LossFunc;
 import network.model.NetworkModel;
 import optimizer.Optimizer;
 
 public interface TrainableNetwork<T, D> {
 
-    void configure(Optimizer optimizer, LossFunc<D> loss);
+    void setOptimizer(Optimizer optimizer);
+
+    void setLossFunction(LossFunc<D> loss);
+
+    void setErrorFunction(ErrorFunc<D> errorFunc);
 
     void train(int epoch, Dataset<T, D> dataset, boolean validate);
 

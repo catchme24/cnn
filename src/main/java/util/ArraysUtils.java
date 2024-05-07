@@ -4,6 +4,24 @@ import util.model.Matrix3D;
 
 public class ArraysUtils {
 
+    public static void scalarMultiplyMutable(double[][] input, double scalar){
+        for (int i = 0; i < input.length; i++){
+            for (int j =0; j < input[0].length; j++){
+                input[i][j] += scalar;
+            }
+        }
+    }
+
+    public static double[][] scalarMultiplyImmutable(double[][] input, double scalar){
+        double[][] result = new double[input.length][input[0].length];
+        for (int i = 0; i < result.length; i++){
+            for (int j =0; j < result[0].length; j++){
+                result[i][j] += scalar;
+            }
+        }
+        return result;
+    }
+
     public static void scalarAdditionMutable(double[][] input, double scalar){
         for (int i = 0; i < input.length; i++){
             for (int j =0; j < input[0].length; j++){

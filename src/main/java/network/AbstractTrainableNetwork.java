@@ -9,6 +9,7 @@ import function.accuracy.DefaultAccuracyFunction;
 import function.loss.DefaultLossFunction;
 import function.loss.LossFunc;
 import network.model.NetworkModel;
+import optimizer.GD;
 import optimizer.Optimizer;
 import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -37,7 +38,7 @@ public abstract class AbstractTrainableNetwork<T, D> implements TrainableNetwork
 
     public AbstractTrainableNetwork(NetworkModel<T, D> networkModel) {
         this.networkModel = networkModel;
-        this.optimizer = new SGD(0.001);
+        this.optimizer = new GD(0.001);
         this.lossFunc = (LossFunc<D>) new DefaultLossFunction();
         this.accuracyFunc = (AccuracyFunc<D>) new DefaultAccuracyFunction();
         this.errorFunction = (ErrorFunc<D>) new DefaultErrorFunction();
@@ -55,9 +56,18 @@ public abstract class AbstractTrainableNetwork<T, D> implements TrainableNetwork
     }
 
     @Override
-    public void configure(Optimizer optimizer, LossFunc<D> loss) {
+    public void setOptimizer(Optimizer optimizer) {
         this.optimizer = optimizer;
-        this.lossFunc = loss;
+    }
+
+    @Override
+    public void setLossFunction(LossFunc<D> lossFunc) {
+        this.lossFunc = lossFunc;
+    }
+
+    @Override
+    public void setErrorFunction(ErrorFunc<D> errorFunction) {
+        this.errorFunction = errorFunction;
     }
 
     @Override

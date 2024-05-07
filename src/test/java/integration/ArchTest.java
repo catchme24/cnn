@@ -3,11 +3,15 @@ package integration;
 import data.Dataset;
 import data.DatasetHelperImpl;
 import data.parser.MyDatasetParser;
+import function.LabelSmoothing;
 import function.activation.ReLu;
 import function.activation.Softmax;
+import function.loss.DefaultLossFunction;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
 import network.layer.*;
+import optimizer.GD;
+import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
 import util.model.Matrix3D;
@@ -253,6 +257,9 @@ public class ArchTest {
                 .append(new FullyConnected(10))
                 .append(new ActivationLayer(new Softmax()))
                 .build();
+
+//        network.setOptimizer(new GD(0.001));
+//        network.setErrorFunction(new LabelSmoothing(0.001));
 
         network.train(1, dataset, false);
 //        network.test(dataset);
