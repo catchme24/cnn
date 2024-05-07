@@ -1,9 +1,7 @@
-package function;
+package function.activation;
 
+import function.activation.ActivationFunc;
 import org.apache.commons.math3.linear.RealMatrix;
-import util.MatrixUtils;
-
-import java.math.BigDecimal;
 
 public class Softmax implements ActivationFunc {
 

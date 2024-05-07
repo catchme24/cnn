@@ -2,6 +2,7 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import optimizer.Optimizer;
 import util.ConvolutionParallelUtils;
 import util.ConvolutionUtils;
 import util.Matrix3DUtils;
@@ -74,19 +75,34 @@ public class PoolingLayer implements Layer3D {
     @Override
     public Matrix3D propogateForward(Matrix3D inputTensor) {
 //        System.out.println(outputDimension);
+        int countTasks = 1;
+        if (inputDimension.getHeightTens() >= 20) {
+            countTasks *= Double.valueOf(getSize().getHeightTens()).intValue() / 10;
+        }
+        if (inputDimension.getChannel() > 32) {
+            countTasks *= 2;
+        }
+
         preActivation = inputTensor.copy();
 //        System.out.println("Forward: " + outputDimension);
 //        System.out.println("maxPooling3D: ");
 //        System.out.println("Входной тензор: " + inputTensor.getMatrix3d().length + "x" + inputTensor.getMatrix3d()[0].length + "x" + inputTensor.getMatrix3d()[0][0].length);
-//        Matrix3D result = ConvolutionUtils.maxPooling3D(inputTensor, outputDimension.getHeightKernel(), outputDimension.getStride());
-
-        Matrix3D result = ConvolutionParallelUtils.maxPooling3DParallel(inputTensor, outputDimension.getHeightKernel(), outputDimension.getStride(), 16);
+        Matrix3D result;
+        if (countTasks == 1) {
+            result = ConvolutionUtils.maxPooling3D(inputTensor, outputDimension.getHeightKernel(), outputDimension.getStride());
+        } else {
+            result = ConvolutionParallelUtils.maxPooling3DParallel(inputTensor, outputDimension.getHeightKernel(), outputDimension.getStride(), countTasks);
+        }
         postActivation = result.copy();
         return result;
     }
 
     @Override
     public Matrix3D propogateBackward(Matrix3D errorTensor) {
+        int countTasks = 1;
+        if (outputDimension.getHeightTens() >= 10) {
+            countTasks *= 4;
+        }
 //        Matrix3D error = new Matrix3D(inputDimension.getChannel(),
 //                                    inputDimension.getWidthTens(),
 //                                    inputDimension.getHeightTens());
@@ -97,12 +113,18 @@ public class PoolingLayer implements Layer3D {
 //        Matrix3D error = ConvolutionUtils.maxPooling3DForBack(preActivation, errorTensor, outputDimension.getWidthKernel(), outputDimension.getStride());
 //        System.out.println("мяу");
 //        Matrix3DUtils.printMatrix3D(error);
-        Matrix3D error = ConvolutionParallelUtils.maxPooling3DForBackParallel(preActivation, errorTensor, outputDimension.getWidthKernel(), outputDimension.getStride(), 16);
+        Matrix3D error;
+        if (countTasks == 1) {
+            error = ConvolutionUtils.maxPooling3DForBack(preActivation, errorTensor, outputDimension.getWidthKernel(), outputDimension.getStride());
+        } else {
+            error = ConvolutionParallelUtils.maxPooling3DForBackParallel(preActivation, errorTensor, outputDimension.getWidthKernel(), outputDimension.getStride(), countTasks);
+        }
+
         return error;
     }
 
     @Override
-    public void correctWeights(double learnRate) {
+    public void correctWeights(Optimizer optimizer) {
 
     }
 

@@ -2,6 +2,7 @@ package optimizer;
 
 public interface Optimizer {
 
-    void optimize();
+    double optimize(double weight);
 
+    double getLearingRate();
 }

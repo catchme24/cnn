@@ -2,8 +2,8 @@ package save;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import function.ReLu;
-import function.Softmax;
+import function.activation.ReLu;
+import function.activation.Softmax;
 import network.TrainableNetwork;
 import network.TrainableNetworkImpl;
 import network.builder.NetworkBuilder;
@@ -179,7 +179,7 @@ public class SaverTest {
 
         TrainableNetworkImpl network = new TrainableNetworkImpl(new NetworkModelImpl(layers), null, null);
 
-        network.learn(1, 1 , null);
+        network.train(1, null , false);
 
         //Прогон сигнала для кеширования преактиваций
 //        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
@@ -240,10 +240,10 @@ public class SaverTest {
                 .append(new FullyConnected(10))
                 .append(new ActivationLayer(new ReLu()))
                 .append(new ActivationLayer(new Softmax()))
-                .build(file);
+                .build(file, null);
 
         System.out.println("СБИЛДИЛОСЬ");
-        network.learn(1, 1, null);
+        network.train(1, 1, null, false);
 
         //Прогон сигнала для теста
 //        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));

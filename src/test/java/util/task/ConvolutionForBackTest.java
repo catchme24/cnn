@@ -98,4 +98,35 @@ public class ConvolutionForBackTest {
             MatrixUtils.printMatrix3D(result[i]);
         }
     }
+
+    @Test
+    public void testConvolutionForBackParallelStolenArch() throws IOException {
+        //3x32x32
+        //32x30x30
+//        Matrix3D preActivation = new Matrix3D(3,32, 32);
+//        Matrix3D localGradient = new Matrix3D(32, 30, 30);
+        //64x12x12
+        //64x10x10
+        Matrix3D preActivation = new Matrix3D(3,32, 32);
+        Matrix3D localGradient = new Matrix3D(32, 30, 30);
+
+        Matrix3DUtils.fillRandom(preActivation);
+        Matrix3DUtils.fillRandom(localGradient);
+
+        int stride = 1;
+
+        Matrix3D[] result = null;
+
+        long start = System.currentTimeMillis();
+
+        int countOfConv = 10000;
+        for (int i = 0; i < countOfConv; i++) {
+            result = ConvolutionParallelUtils.convolutionForBackParallel(preActivation, localGradient, stride, 16);
+//            result = ConvolutionUtils.convolutionForBack(preActivation, localGradient, stride);
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        System.out.println(Double.valueOf(end - start) / 1000);
+    }
 }

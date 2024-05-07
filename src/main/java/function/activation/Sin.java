@@ -1,4 +1,6 @@
-package function;
+package function.activation;
+
+import function.activation.ActivationFunc;
 
 public class Sin implements ActivationFunc {
     @Override

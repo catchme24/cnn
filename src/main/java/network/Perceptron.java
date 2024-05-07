@@ -2,11 +2,12 @@ package network;
 
 import data.DataFrame;
 import data.Dataset;
-import function.LossFunc;
+import function.loss.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
 import network.model.NetworkModel;
 import optimizer.Optimizer;
+import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
@@ -29,7 +30,7 @@ public class Perceptron implements TrainableNetwork {
         }
     }
 
-    @Override
+
     public void learn(int epoch, double learnRate, Dataset dataset) {
         List<DataFrame<double[], Integer>> learn = dataset.getTrainData();
         double rmsePrev = 0;
@@ -120,7 +121,7 @@ public class Perceptron implements TrainableNetwork {
     private void correctWeights(double learnRate) {
         log.debug("Start CORRECT WEIGHTS");
         for (Layer layer: layers) {
-            layer.correctWeights(learnRate);
+            layer.correctWeights(new SGD(learnRate));
         }
         log.debug("End CORRECT WEIGHTS");
     }
@@ -131,16 +132,25 @@ public class Perceptron implements TrainableNetwork {
     }
 
     @Override
+    public void train(int epoch, Dataset dataset, boolean validate) {
+
+    }
+
+    @Override
+    public void train(int epoch, double learnRate, Dataset dataset, boolean validate) {
+
+    }
+
     public void learn(int epoch, Dataset dataset) {
 
     }
 
-    @Override
+
     public void learn(int epoch, int batchSize, Dataset dataset) {
 
     }
 
-    @Override
+
     public void learn(int epoch, double learnRate, int batchSize, Dataset dataset) {
 
     }

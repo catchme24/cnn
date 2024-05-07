@@ -2,6 +2,7 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import optimizer.Optimizer;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.model.Matrix3D;
 import util.MatrixUtils;
@@ -102,7 +103,7 @@ public class Flatten implements Layer3Dto2D {
     }
 
     @Override
-    public void correctWeights(double learnRate) {
+    public void correctWeights(Optimizer optimizer) {
 
     }
 

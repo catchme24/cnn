@@ -1,6 +1,6 @@
-package function;
+package function.activation;
 
-import org.apache.commons.math3.linear.RealMatrix;
+import function.activation.ActivationFunc;
 
 public class Logistic implements ActivationFunc {
 

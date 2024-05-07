@@ -1,4 +1,4 @@
-package network.builder;
+package network.json;
 
 import com.google.gson.InstanceCreator;
 import com.google.gson.TypeAdapter;

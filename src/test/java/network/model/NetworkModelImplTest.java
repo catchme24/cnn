@@ -1,7 +1,7 @@
 package network.model;
 
-import function.ReLu;
-import function.Softmax;
+import function.activation.ReLu;
+import function.activation.Softmax;
 import network.layer.*;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class NetworkModelImplTest {
             RealMatrix object = (RealMatrix) networkModel.propogateForward(dataFrame);
             RealMatrix error = object.subtract(oneHotEncodingVector);
             networkModel.propogateBackward(error);
-            networkModel.correctWeights(1);
+            networkModel.correctWeights(null);
             System.out.println(i);
         }
 

@@ -73,4 +73,32 @@ public class MaxPooling3DForBackTest {
 
         MatrixUtils.printMatrix3D(result);
     }
+
+    @Test
+    public void testMaxPooling3DForBackParallelForStolenArch() throws IOException {
+        Matrix3D preActivation = new Matrix3D(32,28, 28);
+        Matrix3D pooling = new Matrix3D(32,14, 14);
+
+        Matrix3DUtils.fillRandom(preActivation);
+        Matrix3DUtils.fillRandom(pooling);
+
+        int stride = 2;
+        int kernelSize = 2;
+
+        Matrix3D result = null;
+
+        long start = System.currentTimeMillis();
+
+        int countOfConv = 50000;
+        for (int i = 0; i < countOfConv; i++) {
+            result = ConvolutionParallelUtils.maxPooling3DForBackParallel(preActivation,pooling , kernelSize, stride, 4);
+//            result = ConvolutionUtils.maxPooling3DForBack(preActivation, pooling, kernelSize, stride);
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        System.out.println(Double.valueOf(end - start) / 1000);
+
+        MatrixUtils.printMatrix3D(result);
+    }
 }

@@ -1,8 +1,11 @@
 package network.layer;
 
-import function.ActivationFunc;
+import function.activation.ActivationFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import optimizer.Optimizer;
+import util.ActivationParallelUtils;
+import util.Matrix3DUtils;
 import util.model.Matrix3D;
 import util.MatrixUtils;
 
@@ -66,12 +69,15 @@ public class Activation3DLayer implements Layer3D {
 
         preActivation = inputTensor.copy();
         Matrix3D outputTensor = activationFunc.calculate(inputTensor);
+//        ActivationParallelUtils.activationParallelMutable(activationFunc, inputTensor, 4);
 
-        return outputTensor;
+        return inputTensor;
     }
 
     @Override
     public Matrix3D propogateBackward(Matrix3D errorTensor) {
+//        ActivationParallelUtils.activationDerivationParallelMutable(activationFunc, preActivation, 4);
+//        Matrix3D localGradient = Matrix3DUtils.hadamard(preActivation, errorTensor);
         Matrix3D localGradient = MatrixUtils.hadamard(activationFunc.calculateDerivation(preActivation), errorTensor);
         return localGradient;
     }
@@ -87,7 +93,7 @@ public class Activation3DLayer implements Layer3D {
     }
 
     @Override
-    public void correctWeights(double learnRate) {
+    public void correctWeights(Optimizer optimizer) {
 
     }
 

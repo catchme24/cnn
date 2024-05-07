@@ -141,4 +141,52 @@ public class ConvolutionTest {
         }
         MatrixUtils.printMatrix3D(result);
     }
+
+    @Test
+    public void testConvolutionParallelForStolenArch() throws IOException {
+        //32x30x30
+        //32x32x3x3
+//        Matrix3D input = new Matrix3D(32,30, 30);
+//        int kernelChannel = 32;
+//        int kernelSize = 3;
+//        Matrix3DUtils.fillRandom(input);
+//        double bias1 = 1;
+//        int kernelsCount = 32;
+
+        //32x30x30
+        //32x32x3x3
+        Matrix3D input = new Matrix3D(3,32, 32);
+        int kernelChannel = 3;
+        int kernelSize = 3;
+        Matrix3DUtils.fillRandom(input);
+        double bias1 = 1;
+        int kernelsCount = 32;
+
+        Matrix3D[] kernels = new Matrix3D[kernelsCount];
+        double[] biases = new double[kernelsCount];
+        int stride = 1;
+
+        //Инициализация фильтров и баесов
+        for (int i = 0; i < kernelsCount; i++) {
+            kernels[i] = new Matrix3D(kernelChannel, kernelSize, kernelSize);
+            Matrix3DUtils.fillRandom(kernels[i]);
+            biases[i] = bias1;
+        }
+
+        Matrix3D result = null;
+
+        long start = System.currentTimeMillis();
+
+        int countOfConv = 5000;
+        for (int i = 0; i < countOfConv; i++) {
+            result = ConvolutionParallelUtils.convolutionParallel(input, kernels, biases, stride, 16);
+//            result = ConvolutionUtils.convolution(input, kernels, biases, stride);
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        System.out.println(Double.valueOf(end - start) / 1000);
+
+        MatrixUtils.printMatrix3D(result);
+    }
 }

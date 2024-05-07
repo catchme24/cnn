@@ -1,8 +1,9 @@
-package function;
+package function.loss;
 
+import function.loss.LossFunc;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class DefaultLossFunction implements LossFunc {
+public class DefaultLossFunction implements LossFunc<RealMatrix> {
 
     private double loss;
     private int countOfExamples;

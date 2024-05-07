@@ -1,5 +1,6 @@
 package function;
 
+import function.activation.Softmax;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;

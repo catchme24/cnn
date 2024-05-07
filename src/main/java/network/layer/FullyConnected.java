@@ -2,6 +2,7 @@ package network.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
+import optimizer.Optimizer;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.ArraysUtils;
@@ -149,18 +150,18 @@ public class FullyConnected implements Layer2D {
     }
 
     @Override
-    public void correctWeights(double learnRate) {
+    public void correctWeights(Optimizer optimizer) {
 //        System.out.println("Веса:");
 //        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 9));
 //        System.out.println("Градиент весов:");
 //        MatrixUtils.printMatrixTest(weightsGradient.transpose().getSubMatrix(0, 9, 0, 9));
 
-        weights = weights.subtract(weightsGradient.transpose().scalarMultiply(learnRate));
+        weights = weights.subtract(weightsGradient.transpose().scalarMultiply(optimizer.getLearingRate()));
 
 //        System.out.println("Веса:");
 //        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 9));
 
-        baises = baises.subtract(baisesGradient.scalarMultiply(learnRate));
+        baises = baises.subtract(baisesGradient.scalarMultiply(optimizer.getLearingRate()));
     }
 
     @Override

@@ -105,4 +105,33 @@ public class MaxPooling3DTest {
 
         MatrixUtils.printMatrix3D(result);
     }
+
+    @Test
+    public void testMaxPooling3DParallelWithStolenArch() throws IOException {
+        //Тензор ошибки: 128x12x12
+        //Свапнутые кернелы: 64x128x3x3
+//        Matrix3D pooling = new Matrix3D(32,28, 28);
+        Matrix3D pooling = new Matrix3D(128,20, 20);
+
+        Matrix3DUtils.fillRandom(pooling);
+
+        int stride = 2;
+        int kernelSize = 2;
+
+        Matrix3D result = null;
+
+        long start = System.currentTimeMillis();
+
+        int countOfConv = 50000;
+        for (int i = 0; i < countOfConv; i++) {
+            result = ConvolutionParallelUtils.maxPooling3DParallel(pooling,kernelSize , stride, 8);
+//            result = ConvolutionUtils.maxPooling3D(pooling, kernelSize, stride);
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        System.out.println(Double.valueOf(end - start) / 1000);
+
+        MatrixUtils.printMatrix3D(result);
+    }
 }

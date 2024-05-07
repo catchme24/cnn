@@ -1,11 +1,11 @@
-package function;
+package function.accuracy;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
 import java.sql.SQLOutput;
 
-public class DefaultAccuracyFunction {
+public class DefaultAccuracyFunction implements AccuracyFunc<RealMatrix> {
 
     private double accuracy;
     private int countOfExamples;
@@ -19,6 +19,7 @@ public class DefaultAccuracyFunction {
 //        }
 //    }
 
+    @Override
     public void calculate(int labelNumber, RealMatrix result) {
 //        System.out.println("Номер класс: " + labelNumber + ", в прямом вектор получился: ");
 //        MatrixUtils.printMatrixTest(result);
@@ -36,6 +37,7 @@ public class DefaultAccuracyFunction {
         }
     }
 
+    @Override
     public double getOveralAccuracy() {
         if (countOfExamples == 0) {
             throw new RuntimeException("Делим на ноль:)");

@@ -1,7 +1,7 @@
 package network.layer;
 
-import function.ActivationFunc;
-import function.ReLu;
+import function.activation.ActivationFunc;
+import function.activation.ReLu;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Assertions;

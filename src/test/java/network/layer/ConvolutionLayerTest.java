@@ -1,6 +1,6 @@
 package network.layer;
 
-import function.ReLu;
+import function.activation.ReLu;
 import org.junit.jupiter.api.Test;
 import util.model.Matrix3D;
 import util.MatrixUtils;

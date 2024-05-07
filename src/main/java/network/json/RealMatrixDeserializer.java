@@ -1,4 +1,4 @@
-package network.builder;
+package network.json;
 
 import com.google.gson.*;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;

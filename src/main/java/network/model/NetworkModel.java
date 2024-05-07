@@ -1,17 +1,16 @@
 package network.model;
 
+import optimizer.Optimizer;
+
 import java.io.File;
+import java.io.IOException;
 
-public interface NetworkModel {
+public interface NetworkModel<T, D> {
 
-    Object propogateForward(Object input);
+    D propogateForward(T input);
 
-    Object propogateBackward(Object input);
-
-//    void buildFromFile(File file);
+    T propogateBackward(D input);
 
     boolean saveInFile(File file);
-
-    void correctWeights(double learnRate);
-
+    void correctWeights(Optimizer optimizer);
 }

@@ -1,10 +1,7 @@
 package integration;
 
-import data.Dataset;
-import data.DatasetHelperImpl;
-import data.parser.MyDatasetParser;
-import function.ReLu;
-import function.Softmax;
+import function.activation.ReLu;
+import function.activation.Softmax;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
 import network.layer.*;

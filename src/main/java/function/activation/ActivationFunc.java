@@ -1,14 +1,24 @@
-package function;
+package function.activation;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import util.model.Matrix3D;
 
 public interface ActivationFunc {
 
+//    default RealMatrix calculate(RealMatrix x) {
+//        RealMatrix result = x.copy();
+//        for (int i = 0; i < result.getRowDimension(); i++) {
+//            result.setEntry(i, 0, calculate(x.getEntry(i, 0)));
+//        }
+//        return result;
+//    };
+
     default RealMatrix calculate(RealMatrix x) {
         RealMatrix result = x.copy();
         for (int i = 0; i < result.getRowDimension(); i++) {
-            result.setEntry(i, 0, calculate(x.getEntry(i, 0)));
+            for (int j = 0; j < result.getColumnDimension(); j++) {
+                result.setEntry(i, j, calculate(x.getEntry(i, j)));
+            }
         }
         return result;
     };
@@ -33,6 +43,22 @@ public interface ActivationFunc {
             }
         }
         return new Matrix3D(tensor);
+    };
+
+    default void calculate(double[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
+                array[i][j] = calculate(array[i][j]);
+            }
+        }
+    };
+
+    default void calculateDerivation(double[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
+                array[i][j] = calculateDerivation(array[i][j]);
+            }
+        }
     };
 
     default Matrix3D calculateDerivation(Matrix3D x) {
