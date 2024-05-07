@@ -1,5 +1,6 @@
 package network.layer;
 
+import function.initializer.Initializer;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import optimizer.Optimizer;
@@ -29,6 +30,12 @@ public class ConvolutionLayer implements Layer3D {
     private Matrix3D[] kernelsGradient;
 
     private double[] biasesGradient;
+    private Initializer initializer;
+
+    public ConvolutionLayer(int kernelsCount, int kernelSize, int stride, Initializer initializer) {
+        this(kernelsCount, kernelSize, stride);
+        this.initializer = initializer;
+    }
 
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride) {
 
@@ -41,6 +48,12 @@ public class ConvolutionLayer implements Layer3D {
         this.outputDimension = new Dimension(kernelsCount, 0, 0, stride, kernelSize, kernelSize);
         this.kernels = new Matrix3D[kernelsCount];
         this.biases = new double[kernelsCount];
+    }
+
+
+    public ConvolutionLayer(int kernelsCount, int kernelSize, int stride, Dimension inputDimension, Initializer initializer) {
+       this(kernelsCount, kernelSize, stride, inputDimension);
+       this.initializer = initializer;
     }
 
     public ConvolutionLayer(int kernelsCount, int kernelSize, int stride, Dimension inputDimension) {
@@ -82,18 +95,23 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public void initWeight() {
-        //        for (int i = 0; i < this.kernels.size(); i++) {
-//            kernels.set(i, MatrixUtils.fillRandom(new Matrix3D(this.inputDimension.getChannel(),
-//                                                                            this.outputDimension.getHeightKernel(),
-//                                                                            this.outputDimension.getWidthKernel())));
-//        }
-        for (int i = 0; i < this.outputDimension.getChannel(); i++) {
-            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
-                    this.outputDimension.getHeightKernel(),
-                    this.outputDimension.getWidthKernel()),
-                    inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
+        double countCoefficient = inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel();
+        initializer.setParams(countCoefficient);
+        for (int i = 0; i < outputDimension.getChannel(); i++) {
+            Matrix3D kernel = new Matrix3D(this.inputDimension.getChannel(),
+                                                this.outputDimension.getHeightKernel(),
+                                                this.outputDimension.getWidthKernel());
+            kernels[i] = kernel;
+            initializer.initializeMutable(kernels[i]);
         }
-        MatrixUtils.fillHeNormal(biases, inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
+        initializer.initializeMutable(biases);
+//        for (int i = 0; i < this.outputDimension.getChannel(); i++) {
+//            kernels[i] = MatrixUtils.fillHeNormal(new Matrix3D(this.inputDimension.getChannel(),
+//                    this.outputDimension.getHeightKernel(),
+//                    this.outputDimension.getWidthKernel()),
+//                    inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
+//        }
+//        MatrixUtils.fillHeNormal(biases, inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel());
     }
 
     @Override
@@ -114,13 +132,8 @@ public class ConvolutionLayer implements Layer3D {
 
         int calcHeight = (inputDimension.getHeightTens() - outputDimension.getHeightKernel())/outputDimension.getStride() + 1;
         int calcWidth = (inputDimension.getWidthTens() - outputDimension.getWidthKernel())/outputDimension.getStride() + 1;
-
-//        this.outputDimension.setChannel(this.kernels.size());
         this.outputDimension.setHeightTens(calcHeight);
         this.outputDimension.setWidthTens(calcWidth);
-
-        log.debug("Convolution layer: {} prev size", inputDimension);
-        log.debug("Convolution layer: {} size", outputDimension);
     }
 
     @Override
@@ -130,23 +143,18 @@ public class ConvolutionLayer implements Layer3D {
 //        System.out.println(kernels.length);
 //        System.out.println("Размером");
 //        System.out.println(kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
-
         preActivation = inputTensor.copy();
 //        System.out.println("Forward: " + outputDimension);
 //        System.out.println("Входной тензон: " + inputTensor.getMatrix3d().length + "x" + inputTensor.getMatrix3d()[0].length + "x" + inputTensor.getMatrix3d()[0][0].length);
 //        System.out.println("Кернелы: " + kernels.length + "x" + kernels[0].getMatrix3d().length + "x" + kernels[0].getMatrix3d()[0].length + "x" + kernels[0].getMatrix3d()[0][0].length);
-
-
 //        Matrix3D result = ConvolutionUtils.convolution(inputTensor, kernels, biases, outputDimension.getStride());
         Matrix3D result = ConvolutionParallelUtils.convolutionParallel(inputTensor, kernels, biases, outputDimension.getStride(), 16);
-
         postActivation = result.copy();
         return result;
     }
 
     @Override
     public Matrix3D propogateBackward(Matrix3D localGradient) {
-
 //        System.out.println("Backward: " + outputDimension);
 //        System.out.println("convolutionForBack: ");
 //        System.out.println("Преактивация тензон: " + preActivation.getMatrix3d().length + "x" + preActivation.getMatrix3d()[0].length + "x" + preActivation.getMatrix3d()[0][0].length);

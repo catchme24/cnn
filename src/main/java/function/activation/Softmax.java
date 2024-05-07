@@ -2,6 +2,7 @@ package function.activation;
 
 import function.activation.ActivationFunc;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.MatrixUtils;
 
 public class Softmax implements ActivationFunc {
 

@@ -6,6 +6,7 @@ import data.parser.MyDatasetParser;
 import function.LabelSmoothing;
 import function.activation.ReLu;
 import function.activation.Softmax;
+import function.initializer.HeInitializer;
 import function.loss.DefaultLossFunction;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
@@ -207,7 +208,7 @@ public class ArchTest {
     }
 
     @Test
-    public void testLoadArchitectureKradennaya() throws IOException {
+    public void testArchitectureKradennayaMain() throws IOException {
 //        String trainPath = "C:\\cifar10_50\\train";
 //        String validPath = "C:\\cifar10_50\\valid";
 //        String testPath = "C:\\cifar10_50\\test";
@@ -231,7 +232,7 @@ public class ArchTest {
         File logs = new File(logsPath);
         File save = new File(savePath);
 
-        File load = new File(loadPath);
+//        File load = new File(loadPath);
 
         MyDatasetParser myDatasetParser = new MyDatasetParser();
 
@@ -241,28 +242,32 @@ public class ArchTest {
         Dimension imageDimension = new Dimension(3, 32, 32);
 
         TrainableNetwork<Matrix3D, RealMatrix> network = NetworkBuilder.builder()
-                .append(new ConvolutionLayer(32, 3, 1, imageDimension))
+                .append(new ConvolutionLayer(32, 3, 1,
+                                            imageDimension,
+                                            new HeInitializer()))
                 .append(new Activation3DLayer(new ReLu()))
-                .append(new ConvolutionLayer(32, 3, 1))
+                .append(new ConvolutionLayer(32, 3, 1,
+                                            new HeInitializer()))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new PoolingLayer(2, 2))
-                .append(new ConvolutionLayer(64, 3, 1))
+                .append(new ConvolutionLayer(64, 3, 1,
+                                            new HeInitializer()))
                 .append(new Activation3DLayer(new ReLu()))
-                .append(new ConvolutionLayer(64, 3, 1))
+                .append(new ConvolutionLayer(64, 3, 1,
+                                            new HeInitializer()))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new PoolingLayer(2, 2))
                 .append(new Flatten())
-                .append(new FullyConnected(512))
+                .append(new FullyConnected(512,new HeInitializer()))
                 .append(new ActivationLayer(new ReLu()))
-                .append(new FullyConnected(10))
+                .append(new FullyConnected(10,new HeInitializer()))
+//                .append(new ActivationLayer(new ReLu()))
                 .append(new ActivationLayer(new Softmax()))
-                .build();
+                .build(logs, save, true);
 
-//        network.setOptimizer(new GD(0.001));
-//        network.setErrorFunction(new LabelSmoothing(0.001));
-
-        network.train(1, dataset, false);
-//        network.test(dataset);
+        network.setErrorFunction(new LabelSmoothing(0.001));
+        network.train(10, dataset, true);
+        network.test(dataset);
     }
 
     @Test

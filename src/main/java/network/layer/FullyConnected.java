@@ -1,14 +1,11 @@
 package network.layer;
 
+import function.initializer.Initializer;
 import lombok.extern.slf4j.Slf4j;
 import network.NetworkConfigException;
 import optimizer.Optimizer;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import util.ArraysUtils;
-import util.Matrix3DUtils;
 import util.MatrixUtils;
-import util.model.Matrix3D;
 
 @Slf4j
 public class FullyConnected implements Layer2D {
@@ -27,19 +24,28 @@ public class FullyConnected implements Layer2D {
 
     private Dimension outputDimension;
 
+    private Initializer initializer;
+
+
+    public FullyConnected(int neuronsCount, Initializer initializer) {
+        this(neuronsCount);
+        this.initializer = initializer;
+    }
 
     public FullyConnected(int neuronsCount) {
         this.outputDimension = new Dimension(0, neuronsCount, 0);
         this.baises = MatrixUtils.createInstance(neuronsCount, 1);
-//        MatrixUtils.fillHeNormal(baises);
     }
 
+
+    public FullyConnected(int neuronsCount, int inputsCount, Initializer initializer) {
+        this(neuronsCount, inputsCount);
+        this.initializer = initializer;
+    }
     public FullyConnected(int neuronsCount, int inputsCount) {
         this.outputDimension = new Dimension(0, neuronsCount, 0);
         this.inputDimension = new Dimension(0, inputsCount, 0);
-        this.baises = (Array2DRowRealMatrix) MatrixUtils.createInstance(neuronsCount, 1);
-//        this.weights = MatrixUtils.createInstance(inputsCount, neuronsCount);
-//        MatrixUtils.fillHeNormal(weights);
+        this.baises = MatrixUtils.createInstance(neuronsCount, 1);
     }
 
     @Override
@@ -50,11 +56,11 @@ public class FullyConnected implements Layer2D {
     @Override
     public void initWeight() {
         weights = MatrixUtils.createInstance(inputDimension.getHeightTens(), outputDimension.getHeightTens());
-        MatrixUtils.fillHeNormal(baises, inputDimension.getHeightTens());
-        MatrixUtils.fillHeNormal(weights, inputDimension.getHeightTens());
-//        System.out.println("Инициализированные веса:");
-//        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 0));
-
+        initializer.setParams(inputDimension.getHeightTens());
+        initializer.initializeMutable(baises);
+        initializer.initializeMutable(weights);
+//        MatrixUtils.fillHeNormal(baises, inputDimension.getHeightTens());
+//        MatrixUtils.fillHeNormal(weights, inputDimension.getHeightTens());
     }
 
     @Override

@@ -2,6 +2,7 @@ package network;
 
 import data.DataFrame;
 import data.Dataset;
+import function.ErrorFunc;
 import function.loss.LossFunc;
 import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
@@ -126,8 +127,19 @@ public class Perceptron implements TrainableNetwork {
         log.debug("End CORRECT WEIGHTS");
     }
 
+
     @Override
-    public void configure(Optimizer optimizer, LossFunc loss) {
+    public void setOptimizer(Optimizer optimizer) {
+
+    }
+
+    @Override
+    public void setLossFunction(LossFunc loss) {
+
+    }
+
+    @Override
+    public void setErrorFunction(ErrorFunc errorFunc) {
 
     }
 

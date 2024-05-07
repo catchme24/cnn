@@ -69,7 +69,7 @@ public class ActivationLayer implements Layer2D {
 
 //        //Размеры
 //        System.out.println("Forward " + this.getClass().getName() + " " + dimension);
-//        //Значения
+        //Значения
 //        System.out.println("-----------ЗНАЧЕНИЯ-----------");
 //        System.out.println("Входной вектор: ");
 //        MatrixUtils.printMatrixTest(inputVector.getSubMatrix(0, 9, 0, 0));
