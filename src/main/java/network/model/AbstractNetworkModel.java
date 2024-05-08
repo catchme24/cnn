@@ -6,9 +6,11 @@ import network.json.RealMatrixDeserializer;
 import network.layer.Dimension;
 import network.layer.Layer;
 import network.layer.Layer2D;
+import network.layer.LearningLayer;
 import optimizer.Optimizer;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
+import util.model.Matrix3D;
 
 import java.io.*;
 import java.util.*;
@@ -16,15 +18,12 @@ import java.util.*;
 public abstract class AbstractNetworkModel implements NetworkModel {
 
     protected Deque<Layer> layers;
+    protected List<Object> params;
     protected Gson saver;
 
     public AbstractNetworkModel(Deque<Layer> layers) {
         this.layers = layers;
         this.saver = new GsonBuilder().create();
-
-//        this.gson = new GsonBuilder()
-//                .registerTypeAdapter(RealMatrix.class, new RealMatrixDeserializer())
-//                .create();
     }
 
     @Override
@@ -50,8 +49,12 @@ public abstract class AbstractNetworkModel implements NetworkModel {
 
     @Override
     public void correctWeights(Optimizer optimizer) {
-        for (Layer layer: layers) {
-            layer.correctWeights(optimizer);
+        for (Layer layer: this.layers) {
+            if (layer instanceof LearningLayer) {
+                LearningLayer learningLayer = (LearningLayer) layer;
+                optimizer.optimize(learningLayer.getWeights(), learningLayer.getWeightsGrad());
+                optimizer.optimize(learningLayer.getBaises(), learningLayer. getBaisesGrad());
+            }
         }
     }
 

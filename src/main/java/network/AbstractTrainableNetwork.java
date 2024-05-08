@@ -11,8 +11,8 @@ import function.loss.LossFunc;
 import network.model.NetworkModel;
 import optimizer.GD;
 import optimizer.Optimizer;
-import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
+import util.MatrixUtils;
 import util.model.Matrix3D;
 
 import java.io.BufferedWriter;
@@ -86,18 +86,30 @@ public abstract class AbstractTrainableNetwork<T, D> implements TrainableNetwork
             if (validate) {
                 valid(validData, i);
             }
+            if (saveFile != null) {
+                saveWithEpoch(i);
+            }
         }
         //ТУТА СОХРАНИТЬ СЕТКУ
-        if (saveFile != null) {
-            networkModel.saveInFile(saveFile);
-        }
+//        if (saveFile != null) {
+//            networkModel.saveInFile(saveFile);
+//        }
     }
+
+    protected void saveWithEpoch(int epoch) {
+        File file = new File(saveFile.getParent() + "\\" + saveFile.getName() + "_epoch_" + (epoch + 1));
+        networkModel.saveInFile(file);
+    }
+
+
 
     protected void train(List<DataFrame<T, D>> trainData, int epochNumber) {
         for (int i = 0; i < trainData.size(); i++){
             D forward = networkModel.propogateForward(trainData.get(i).getSample());
 //            D error = (D) forward.subtract(trainData.get(i).getGroundTruth());
             D error = errorFunction.calculate(trainData.get(i).getGroundTruth(), forward);
+//            System.out.println("-------------");
+//            MatrixUtils.printMatrixTest((RealMatrix) error);
 
             lossFunc.calculate(trainData.get(i).getGroundTruth(), forward);
             accuracyFunc.calculate(trainData.get(i).getLabelNumber(), forward);

@@ -66,18 +66,18 @@ public class MatrixUtils {
         return input;
     }
 
-    public static Matrix3D subtract(Matrix3D input, Matrix3D subtrahend, Optimizer optimizer) {
-        double[][][] input3D = input.getMatrix3d();
-        double[][][] subtrahend3D = subtrahend.getMatrix3d();
-        for(int i = 0; i < input3D.length; i++) {
-            for(int j = 0; j < input3D[0].length; j++) {
-                for(int k = 0; k < input3D[0][0].length; k++) {
-                    input3D[i][j][k] -= optimizer.optimize(subtrahend3D[i][j][k]);
-                }
-            }
-        }
-        return input;
-    }
+//    public static Matrix3D subtract(Matrix3D input, Matrix3D subtrahend, Optimizer optimizer) {
+//        double[][][] input3D = input.getMatrix3d();
+//        double[][][] subtrahend3D = subtrahend.getMatrix3d();
+//        for(int i = 0; i < input3D.length; i++) {
+//            for(int j = 0; j < input3D[0].length; j++) {
+//                for(int k = 0; k < input3D[0][0].length; k++) {
+//                    input3D[i][j][k] -= optimizer.optimize(subtrahend3D[i][j][k]);
+//                }
+//            }
+//        }
+//        return input;
+//    }
 
     public static Matrix3D fillHeNormal(Matrix3D matrix, int count) {
         double[][][] array3D = matrix.getMatrix3d();

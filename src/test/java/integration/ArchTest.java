@@ -7,16 +7,16 @@ import function.LabelSmoothing;
 import function.activation.ReLu;
 import function.activation.Softmax;
 import function.initializer.HeInitializer;
-import function.loss.DefaultLossFunction;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
 import network.layer.*;
+import optimizer.Adagrad;
 import optimizer.GD;
 import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
-import util.model.Matrix3D;
 import util.MatrixUtils;
+import util.model.Matrix3D;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -218,9 +218,9 @@ public class ArchTest {
 //        String testPath = "D:\\cifar10\\test";
 
         String logsPath = "D:\\logs.txt";
-        String savePath = "D:\\network.txt";
+        String savePath = "D:\\network";
 
-        String loadPath = "D:\\network10epoch50000.txt";
+//        String loadPath = "D:\\network10epoch50000";
 
         String trainPath = "D:\\cifar10_50\\train";
         String validPath = "D:\\cifar10_50\\valid";
@@ -230,7 +230,7 @@ public class ArchTest {
         File valid = new File(validPath);
         File test = new File(testPath);
         File logs = new File(logsPath);
-        File save = new File(savePath);
+//        File save = new File(savePath);
 
 //        File load = new File(loadPath);
 
@@ -263,9 +263,12 @@ public class ArchTest {
                 .append(new FullyConnected(10,new HeInitializer()))
 //                .append(new ActivationLayer(new ReLu()))
                 .append(new ActivationLayer(new Softmax()))
-                .build(logs, save, true);
+                .build();
 
-        network.setErrorFunction(new LabelSmoothing(0.001));
+        network.setOptimizer(new Adagrad());
+//        network.setOptimizer(new GD(0.001));
+//        network.setErrorFunction(new LabelSmoothing(0.01));
+//        network.setErrorFunction(new LabelSmoothing(0.001));
         network.train(10, dataset, true);
         network.test(dataset);
     }
@@ -275,7 +278,7 @@ public class ArchTest {
         String logsPath = "D:\\logs.txt";
         String savePath = "D:\\network.txt";
 
-        String loadPath = "D:\\network.txt";
+//        String loadPath = "D:\\network.txt";
 
         String trainPath = "D:\\cifar10_50\\train";
         String validPath = "D:\\cifar10_50\\valid";
@@ -287,7 +290,7 @@ public class ArchTest {
         File logs = new File(logsPath);
 //        File save = new File(savePath);
 
-        File load = new File(loadPath);
+//        File load = new File(loadPath);
 
         MyDatasetParser myDatasetParser = new MyDatasetParser();
 
@@ -312,9 +315,11 @@ public class ArchTest {
                 .append(new ActivationLayer(new ReLu()))
                 .append(new FullyConnected(10))
                 .append(new ActivationLayer(new Softmax()))
-                .build(logs, load);
+                .build();
 
-//        network.train(5, dataset);
+
+        network.setErrorFunction(new LabelSmoothing(0.01));
+        network.train(25, dataset, true);
         network.test(dataset);
     }
 }

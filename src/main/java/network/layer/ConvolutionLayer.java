@@ -11,7 +11,7 @@ import util.model.Matrix3D;
 import util.MatrixUtils;
 
 @Slf4j
-public class ConvolutionLayer implements Layer3D {
+public class ConvolutionLayer implements Layer3D, LearningLayer {
 
     private Matrix3D preActivation;
 
@@ -91,10 +91,11 @@ public class ConvolutionLayer implements Layer3D {
     @Override
     public void unchain() {
         previousLayer = null;
+        initializer = null;
     }
 
     @Override
-    public void initWeight() {
+    public void initWeightsAndBaises() {
         double countCoefficient = inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel();
         initializer.setParams(countCoefficient);
         for (int i = 0; i < outputDimension.getChannel(); i++) {
@@ -155,16 +156,8 @@ public class ConvolutionLayer implements Layer3D {
 
     @Override
     public Matrix3D propogateBackward(Matrix3D localGradient) {
-//        System.out.println("Backward: " + outputDimension);
-//        System.out.println("convolutionForBack: ");
-//        System.out.println("Преактивация тензон: " + preActivation.getMatrix3d().length + "x" + preActivation.getMatrix3d()[0].length + "x" + preActivation.getMatrix3d()[0][0].length);
-//        System.out.println("Локальный градиент: " + localGradient.getMatrix3d().length + "x" + localGradient.getMatrix3d()[0].length + "x" + localGradient.getMatrix3d()[0][0].length);
         kernelsGradient = ConvolutionUtils.convolutionForBack(preActivation, localGradient, outputDimension.getStride());
-
         kernelsGradient = ConvolutionParallelUtils.convolutionForBackParallel(preActivation, localGradient, outputDimension.getStride(), 16);
-
-//        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
-
         biasesGradient = ConvolutionUtils.sumForBiases(localGradient);
 
         Matrix3D[] swappedKernels = ConvolutionUtils.swapFilters(kernels);
@@ -172,21 +165,13 @@ public class ConvolutionLayer implements Layer3D {
         if(outputDimension.getStride() == 1){
             //Формула без Dilate(s-1)
             errorTensor = ConvolutionUtils.zeroPadding(localGradient, outputDimension.getHeightKernel() -1);
-//            System.out.println("convolutionWithOutBaises: ");
-//            System.out.println("Тензор ошибки: " + localGradient.getMatrix3d().length + "x" + localGradient.getMatrix3d()[0].length + "x" + localGradient.getMatrix3d()[0][0].length);
-//            System.out.println("Свапнутые кернелы: " + swappedKernels.length + "x" + swappedKernels[0].getMatrix3d().length + "x" + swappedKernels[0].getMatrix3d()[0].length + "x" + swappedKernels[0].getMatrix3d()[0][0].length);
 //            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
-
             errorTensor = ConvolutionParallelUtils.convolutionWithoutBaisesParallel(errorTensor, swappedKernels, 1, 16);
         } else {
             //Формула c Dilate(s-1)
             errorTensor = ConvolutionUtils.dilate(localGradient, outputDimension.getStride() - 1);
             errorTensor = ConvolutionUtils.zeroPadding(errorTensor, outputDimension.getHeightKernel() -1);
 //            errorTensor = ConvolutionUtils.convolutionWithoutBiases(errorTensor, swappedKernels, 1);
-//            System.out.println("convolutionWithOutBaises: ");
-//            System.out.println("Тензор ошибки: " + localGradient.getMatrix3d().length + "x" + localGradient.getMatrix3d()[0].length + "x" + localGradient.getMatrix3d()[0][0].length);
-//            System.out.println("Свапнутые кернелы: " + swappedKernels.length + "x" + swappedKernels[0].getMatrix3d().length + "x" + swappedKernels[0].getMatrix3d()[0].length + "x" + swappedKernels[0].getMatrix3d()[0][0].length);
-
             errorTensor = ConvolutionParallelUtils.convolutionWithoutBaisesParallel(errorTensor, swappedKernels, 1, 16);
         }
         return errorTensor;
@@ -203,21 +188,31 @@ public class ConvolutionLayer implements Layer3D {
     }
 
     @Override
-    public void correctWeights(Optimizer optimizer) {
-//        System.out.println("ПЕРВЫЙ КЕРНЕЛ");
-//        Matrix3DUtils.printMatrix3D(kernels[0]);
-//        System.out.println("ГРАДИЕНТЫ ВЕСОВ");
-//        Matrix3DUtils.printMatrix3D(kernelsGradient[0]);
-        for (int i = 0; i < kernels.length; i++){
-            MatrixUtils.subtract(kernels[i], kernelsGradient[i], optimizer);
-        }
-        for(int i = 0; i < biases.length; i++){
-//            biases[i] -= biasesGradient[i] * learnRate;
-            biases[i] -= optimizer.optimize(biasesGradient[i]);
-        };
+    public Object getWeights() {
 
-//        System.out.println("СКОРЕКТИРОВАННЫЕ ВЕСА");
-//        Matrix3DUtils.printMatrix3D(kernels[0]);
+//        for (int i = 0; i < kernels.length; i++){
+//            MatrixUtils.subtract(kernels[i], kernelsGradient[i], optimizer);
+//        }
+//        for(int i = 0; i < biases.length; i++){
+//            biases[i] -= biasesGradient[i] * learnRate;
+//            biases[i] -= optimizer.optimize(biasesGradient[i]);
+//        };
+        return kernels;
+    }
+
+    @Override
+    public Object getBaises() {
+        return biases;
+    }
+
+    @Override
+    public Object getWeightsGrad() {
+        return kernelsGradient;
+    }
+
+    @Override
+    public Object getBaisesGrad() {
+        return biasesGradient;
     }
 
     @Override

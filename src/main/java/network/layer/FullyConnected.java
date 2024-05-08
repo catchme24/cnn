@@ -8,7 +8,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
 @Slf4j
-public class FullyConnected implements Layer2D {
+public class FullyConnected implements Layer2D, LearningLayer {
     private RealMatrix baises;
     private RealMatrix baisesGradient;
     private RealMatrix weights;
@@ -51,10 +51,11 @@ public class FullyConnected implements Layer2D {
     @Override
     public void unchain() {
         previousLayer = null;
+        initializer = null;
     }
 
     @Override
-    public void initWeight() {
+    public void initWeightsAndBaises() {
         weights = MatrixUtils.createInstance(inputDimension.getHeightTens(), outputDimension.getHeightTens());
         initializer.setParams(inputDimension.getHeightTens());
         initializer.initializeMutable(baises);
@@ -74,7 +75,6 @@ public class FullyConnected implements Layer2D {
             }
             this.previousLayer = previous;
             this.inputDimension = new Dimension(0, previous.getSize().getHeightTens(), 0);
-//            weights = MatrixUtils.createInstance(previous.getSize().getHeightTens(), dimension.getHeightTens());
             log.debug("FullyConnected layer: {} prev size", previous.getSize());
             log.debug("FullyConnected layer: {} size", outputDimension);
         } else {
@@ -82,7 +82,7 @@ public class FullyConnected implements Layer2D {
             log.debug("FullyConnected layer: {} prev size", previous.getSize());
             log.debug("FullyConnected layer: {} size", outputDimension);
         }
-//        MatrixUtils.fillHeNormal(weights);
+
     }
 
     @Override
@@ -101,20 +101,6 @@ public class FullyConnected implements Layer2D {
         RealMatrix transposedWeight = weights.transpose();
         RealMatrix multiplied = transposedWeight.multiply(inputVector);
         RealMatrix output = multiplied.add(baises);
-
-//        //Размеры
-//        System.out.println("Forward " + this.getClass().getName() + " " + outputDimension);
-//        System.out.println("Входной вектор: " + inputVector.getRowDimension() + "x" + inputVector.getColumnDimension());
-//        System.out.println("Весов размер: " + weights.getRowDimension() + "x" + weights.getColumnDimension());
-//        System.out.println("Транс весов размер: " + transposedWeight.getRowDimension() + "x" + transposedWeight.getColumnDimension());
-//        //Значения
-//        System.out.println("-----------ЗНАЧЕНИЯ-----------");
-//        System.out.println("Входной вектор: ");
-//        MatrixUtils.printMatrixTest(inputVector.getSubMatrix(0, 9, 0, 0));
-//        System.out.println("Веса:");
-//        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 9));
-
-        postActivation = output.copy();
         return output;
     }
 
@@ -124,23 +110,6 @@ public class FullyConnected implements Layer2D {
         baisesGradient = localGradients;
         RealMatrix transopedPreActivation = preActivation.transpose();
         weightsGradient = localGradients.multiply(transopedPreActivation);
-
-//        //Размеры
-//        System.out.println("Backward " + this.getClass().getName() + " " + outputDimension);
-//        System.out.println("Локал градиент размер: " + localGradients.getRowDimension() + "x" + localGradients.getColumnDimension());
-//        System.out.println("Пре активация размер: " + preActivation.getRowDimension() + "x" + preActivation.getColumnDimension());
-//        System.out.println("Транс пре активация размер: " + transopedPreActivation.getRowDimension() + "x" + transopedPreActivation.getColumnDimension());
-//        System.out.println("Градиент весов размер: " + weightsGradient.getRowDimension() + "x" + weightsGradient.getColumnDimension());
-//        System.out.println("Весов размер: " + weights.getRowDimension() + "x" + weights.getColumnDimension());
-//        //Значения
-//        System.out.println("-----------ЗНАЧЕНИЯ-----------");
-//        System.out.println("Локал градиент:");
-//        MatrixUtils.printMatrixTest(localGradients.getSubMatrix(0, 9, 0, 0));
-//        System.out.println("Пре активация:");
-//        MatrixUtils.printMatrixTest(preActivation.getSubMatrix(0, 9, 0, 0));
-//        System.out.println("Градиент весов:");
-//        MatrixUtils.printMatrixTest(weightsGradient.getSubMatrix(0, 9, 0, 9));
-
         RealMatrix errorVector = weights.multiply(localGradients);
         return errorVector;
     }
@@ -156,24 +125,30 @@ public class FullyConnected implements Layer2D {
     }
 
     @Override
-    public void correctWeights(Optimizer optimizer) {
-//        System.out.println("Веса:");
-//        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 9));
-//        System.out.println("Градиент весов:");
-//        MatrixUtils.printMatrixTest(weightsGradient.transpose().getSubMatrix(0, 9, 0, 9));
+    public Object getWeights() {
+//        optimizer.optimize(weights);
+//        weights = weights.subtract(weightsGradient.transpose().scalarMultiply(optimizer.getLearingRate()));
+//        baises = baises.subtract(baisesGradient.scalarMultiply(optimizer.getLearingRate()));
+        return weights;
+    }
 
-        weights = weights.subtract(weightsGradient.transpose().scalarMultiply(optimizer.getLearingRate()));
+    @Override
+    public RealMatrix getBaises() {
+        return baises;
+    }
 
-//        System.out.println("Веса:");
-//        MatrixUtils.printMatrixTest(weights.getSubMatrix(0, 9, 0, 9));
+    @Override
+    public Object getWeightsGrad() {
+        return weightsGradient.transpose();
+    }
 
-        baises = baises.subtract(baisesGradient.scalarMultiply(optimizer.getLearingRate()));
+    @Override
+    public Object getBaisesGrad() {
+        return baisesGradient;
     }
 
     @Override
     public Dimension getSize() {
         return outputDimension;
     }
-
-
 }

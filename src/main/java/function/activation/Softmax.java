@@ -8,6 +8,7 @@ public class Softmax implements ActivationFunc {
 
 //    @Override
 //    public RealMatrix calculate(RealMatrix x) {
+//        MatrixUtils.printMatrixTest(x);
 //        RealMatrix result = x.copy();
 //        double max = 0;
 //        double[] vector = x.getColumn(0);
@@ -29,6 +30,7 @@ public class Softmax implements ActivationFunc {
 
     @Override
     public RealMatrix calculate(RealMatrix x) {
+//        MatrixUtils.printMatrixTest(x);
         RealMatrix result = x.copy();
         double[] vector = x.getColumn(0);
         double summ = 0;

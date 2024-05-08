@@ -29,11 +29,6 @@ public class ActivationLayer implements Layer2D {
     }
 
     @Override
-    public void initWeight() {
-
-    }
-
-    @Override
     public void setPrevious(Layer previous) {
         if (!(previous instanceof Layer2D || previous instanceof Layer3Dto2D)) {
             throw new NetworkConfigException("Prev layer for FullyConnected must be child of Layer2D");
@@ -87,11 +82,6 @@ public class ActivationLayer implements Layer2D {
     @Override
     public Object propogateForward(Object input) {
         return propogateForward((RealMatrix) input);
-    }
-
-    @Override
-    public void correctWeights(Optimizer optimizer) {
-
     }
 
     @Override

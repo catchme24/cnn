@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import network.layer.Layer;
 import network.model.NetworkModel;
 import optimizer.Optimizer;
-import optimizer.SGD;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.MatrixUtils;
 
@@ -122,7 +121,7 @@ public class Perceptron implements TrainableNetwork {
     private void correctWeights(double learnRate) {
         log.debug("Start CORRECT WEIGHTS");
         for (Layer layer: layers) {
-            layer.correctWeights(new SGD(learnRate));
+//            layer.correctWeights(new SGD(learnRate));
         }
         log.debug("End CORRECT WEIGHTS");
     }
