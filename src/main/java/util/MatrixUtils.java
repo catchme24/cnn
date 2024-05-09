@@ -205,6 +205,10 @@ public class MatrixUtils {
         return worker.createMatrix(row, 1).scalarAdd(value);
     }
 
+    public static RealMatrix createInstance(int row, int column, double initValue) {
+        return worker.createMatrix(row,column).scalarAdd(initValue);
+    }
+
     public static RealMatrix getGroundTruth(double classNumber, int classesCount) {
         RealMatrix matrix = worker.createMatrix(classesCount, 1);
         matrix.setEntry(Double.valueOf(classNumber).intValue() - 1, 0, 1.0);

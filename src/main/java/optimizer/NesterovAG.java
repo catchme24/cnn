@@ -7,10 +7,10 @@ import util.model.Matrix3D;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Adagrad implements Optimizer {
+public class NesterovAG implements Optimizer {
 
-    private double learningRate;
-    private double epsilon;
+//    private double learningRate;
+    private double gamma;
 
     private Map<Matrix3D[], Matrix3D[]> tensorParamsToPrevV;
 
@@ -18,20 +18,13 @@ public class Adagrad implements Optimizer {
 
     private Map<double[], double[]> arrayParamsToPrevV;
 
-    private double weightDecay;
-
-    public Adagrad() {
-        this(0.001, 0.0000001, 0.0);
+    public NesterovAG() {
+        this(0.99);
     }
 
-    public Adagrad(double epsilon, double weightDecay) {
-        this(0.001, epsilon, weightDecay);
-    }
-
-    public Adagrad(double learningRate, double epsilon, double weightDecay) {
-        this.epsilon = epsilon;
-        this.learningRate = learningRate;
-        this.weightDecay = weightDecay;
+    public NesterovAG(double gamma) {
+//        this.learningRate = learningRate;
+        this.gamma = gamma;
         this.tensorParamsToPrevV = new HashMap<>();
         this.matrixParamsToPrevV = new HashMap<>();
         this.arrayParamsToPrevV = new HashMap<>();
@@ -44,19 +37,19 @@ public class Adagrad implements Optimizer {
         if (!matrixParamsToPrevV.containsKey(hashCode)) {
             matrixParamsToPrevV.put(hashCode, MatrixUtils.createInstance(params.getRowDimension(), params.getColumnDimension()));
         }
-        RealMatrix prevGradientsPow = matrixParamsToPrevV.get(hashCode);
+        RealMatrix movingAverage = matrixParamsToPrevV.get(hashCode);
 
-        //form sum of g^2
+        //form moving average
         for (int i = 0; i < params.getRowDimension(); i++) {
             for (int j = 0; j < params.getColumnDimension(); j++) {
-                prevGradientsPow.setEntry(i, j, prevGradientsPow.getEntry(i, j) + Math.pow(gradients.getEntry(i, j), 2));
+                movingAverage.setEntry(i, j, gamma * movingAverage.getEntry(i, j) + (1 - gamma) * gradients.getEntry(i, j));
             }
         }
 
         //correct weights
         for (int i = 0; i < params.getRowDimension(); i++) {
             for (int j = 0; j < params.getColumnDimension(); j++) {
-                params.setEntry(i, j, (params.getEntry(i, j) - (learningRate * gradients.getEntry(i, j)) / (Math.sqrt(prevGradientsPow.getEntry(i, j) + epsilon)) - weightDecay * learningRate * params.getEntry(i, j)));
+                params.setEntry(i, j, (params.getEntry(i, j) - movingAverage.getEntry(i, j)));
             }
         }
 
@@ -73,16 +66,16 @@ public class Adagrad implements Optimizer {
             tensorParamsToPrevV.put(params, empty);
         }
 
-        Matrix3D[] prevGradientsPow = tensorParamsToPrevV.get(params);
+        Matrix3D[] movingAverage = tensorParamsToPrevV.get(params);
 
-        //form sum of g^2
-        for (int i = 0; i < prevGradientsPow.length; i++) {
-            double[][][] prevGradPowMatrix = prevGradientsPow[i].getMatrix3d();
+        //form moving average
+        for (int i = 0; i < movingAverage.length; i++) {
+            double[][][] prevMovingAverage = movingAverage[i].getMatrix3d();
             double[][][] gradientsMatrix = gradients[i].getMatrix3d();
-            for (int j = 0; j < prevGradPowMatrix.length; j++) {
-                for (int k = 0; k < prevGradPowMatrix[0].length; k++) {
-                    for (int g = 0; g < prevGradPowMatrix[0][0].length; g++) {
-                        prevGradPowMatrix[j][k][g] += Math.pow(gradientsMatrix[j][k][g], 2);
+            for (int j = 0; j < prevMovingAverage.length; j++) {
+                for (int k = 0; k < prevMovingAverage[0].length; k++) {
+                    for (int g = 0; g < prevMovingAverage[0][0].length; g++) {
+                        prevMovingAverage[j][k][g] += gamma * prevMovingAverage[j][k][g] + (1 - gamma) * gradientsMatrix[j][k][g];
                     }
                 }
             }
@@ -93,12 +86,12 @@ public class Adagrad implements Optimizer {
         //correct weights
         for (int i = 0; i < params.length; i++) {
             double[][][] paramsMatrix = params[i].getMatrix3d();
-            double[][][] prevGradPowMatrix = prevGradientsPow[i].getMatrix3d();
+            double[][][] prevMovingAverage = movingAverage[i].getMatrix3d();
             double[][][] gradientsMatrix = gradients[i].getMatrix3d();
             for (int j = 0; j < paramsMatrix.length; j++) {
                 for (int k = 0; k < paramsMatrix[0].length; k++) {
                     for (int g = 0; g < paramsMatrix[0][0].length; g++) {
-                        paramsMatrix[j][k][g] -= learningRate * gradientsMatrix[j][k][g] / (Math.sqrt(prevGradPowMatrix[j][k][g] + epsilon)) + weightDecay * learningRate * paramsMatrix[j][k][g];
+                        paramsMatrix[j][k][g] -= prevMovingAverage[j][k][g];
                     }
                 }
             }
@@ -111,16 +104,16 @@ public class Adagrad implements Optimizer {
             arrayParamsToPrevV.put(params, new double[params.length]);
         }
 
-        double[] prevGradientsPow = arrayParamsToPrevV.get(params);
+        double[] movingAverage = arrayParamsToPrevV.get(params);
 
         //form sum of g^2
         for (int i = 0; i < params.length; i++) {
-            prevGradientsPow[i] += Math.pow(gradients[i], 2);
+            movingAverage[i] += gamma * movingAverage[i] + (1 - gamma) * gradients[i];
         }
 
         //correct weights
         for (int i = 0; i < params.length; i++) {
-            params[i] -= learningRate * gradients[i] / (Math.sqrt(prevGradientsPow[i] + epsilon)) + weightDecay * learningRate * params[i];
+            params[i] -= movingAverage[i];
         }
     }
 
@@ -137,11 +130,11 @@ public class Adagrad implements Optimizer {
 
     @Override
     public double getLearingRate() {
-        return learningRate;
+        return 1 - gamma;
     }
 
     @Override
     public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
+        this.gamma = 1 - learningRate;
     }
 }

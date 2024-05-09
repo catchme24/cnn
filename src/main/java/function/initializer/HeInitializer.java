@@ -9,7 +9,11 @@ public class HeInitializer implements Initializer {
     private double stdDev;
 
     public HeInitializer() {
-        this.random = new Random();
+        this(5);
+    }
+
+    public HeInitializer(int seed) {
+        this.random = new Random(seed);
     }
 
     @Override

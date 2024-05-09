@@ -38,7 +38,7 @@ public abstract class AbstractTrainableNetwork<T, D> implements TrainableNetwork
 
     public AbstractTrainableNetwork(NetworkModel<T, D> networkModel) {
         this.networkModel = networkModel;
-        this.optimizer = new GD(0.001);
+        this.optimizer = new GD();
         this.lossFunc = (LossFunc<D>) new DefaultLossFunction();
         this.accuracyFunc = (AccuracyFunc<D>) new DefaultAccuracyFunction();
         this.errorFunction = (ErrorFunc<D>) new DefaultErrorFunction();

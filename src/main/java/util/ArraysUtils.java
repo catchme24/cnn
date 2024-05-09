@@ -122,4 +122,10 @@ public class ArraysUtils {
         }
         return summ;
     }
+
+    public static void fillArray(double[] input, double initValue) {
+        for (int i = 0; i < input.length; i++) {
+            input[i] = initValue;
+        }
+    }
 }

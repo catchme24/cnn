@@ -1,16 +1,26 @@
 package optimizer;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import util.ArraysUtils;
 import util.MatrixUtils;
 import util.model.Matrix3D;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Adagrad implements Optimizer {
+
+/*
+ ЕСЛИ НЕ ЗАДАВАТЬ НАЧАЛЬНОЕ ЗНАЧЕНИЕ БУДЕТ ДОЛГО НАКАПЛИВАТЬСЯ И СООТСТВЕННО ДОЛГО ОБУЧАТЬСЯ!!11
+ РЕКОМЕНДУЕМ ЗАДАТЬ НАЧАЛЬНОЕ ЗНАЧЕНИЕ ОТЛИЧНОЕ ОТ НУЛЯ
+*/
+public class RMSprop implements Optimizer {
 
     private double learningRate;
     private double epsilon;
+
+    private double gamma;
+
+    private double initValue;
 
     private Map<Matrix3D[], Matrix3D[]> tensorParamsToPrevV;
 
@@ -20,17 +30,19 @@ public class Adagrad implements Optimizer {
 
     private double weightDecay;
 
-    public Adagrad() {
-        this(0.001, 0.0000001, 0.0);
+    public RMSprop() {
+        this(0.0000001, 0.9, 0.0, 0.0);
     }
 
-    public Adagrad(double epsilon, double weightDecay) {
-        this(0.001, epsilon, weightDecay);
+    public RMSprop(double epsilon, double gamma, double initValue, double weightDecay) {
+        this(0.001, epsilon, gamma, initValue, weightDecay);
     }
 
-    public Adagrad(double learningRate, double epsilon, double weightDecay) {
+    public RMSprop(double learningRate, double epsilon, double gamma, double initValue, double weightDecay) {
         this.epsilon = epsilon;
         this.learningRate = learningRate;
+        this.gamma = gamma;
+        this.initValue = initValue;
         this.weightDecay = weightDecay;
         this.tensorParamsToPrevV = new HashMap<>();
         this.matrixParamsToPrevV = new HashMap<>();
@@ -42,21 +54,21 @@ public class Adagrad implements Optimizer {
         int hashCode = System.identityHashCode(params);
 
         if (!matrixParamsToPrevV.containsKey(hashCode)) {
-            matrixParamsToPrevV.put(hashCode, MatrixUtils.createInstance(params.getRowDimension(), params.getColumnDimension()));
+            matrixParamsToPrevV.put(hashCode, MatrixUtils.createInstance(params.getRowDimension(), params.getColumnDimension(), initValue));
         }
-        RealMatrix prevGradientsPow = matrixParamsToPrevV.get(hashCode);
+        RealMatrix movingAverage = matrixParamsToPrevV.get(hashCode);
 
-        //form sum of g^2
+        //form moving average
         for (int i = 0; i < params.getRowDimension(); i++) {
             for (int j = 0; j < params.getColumnDimension(); j++) {
-                prevGradientsPow.setEntry(i, j, prevGradientsPow.getEntry(i, j) + Math.pow(gradients.getEntry(i, j), 2));
+                movingAverage.setEntry(i, j, gamma * movingAverage.getEntry(i, j) + (1 - gamma) * Math.pow(gradients.getEntry(i, j), 2));
             }
         }
 
         //correct weights
         for (int i = 0; i < params.getRowDimension(); i++) {
             for (int j = 0; j < params.getColumnDimension(); j++) {
-                params.setEntry(i, j, (params.getEntry(i, j) - (learningRate * gradients.getEntry(i, j)) / (Math.sqrt(prevGradientsPow.getEntry(i, j) + epsilon)) - weightDecay * learningRate * params.getEntry(i, j)));
+                params.setEntry(i, j, (params.getEntry(i, j) - (learningRate * gradients.getEntry(i, j)) / (Math.sqrt(movingAverage.getEntry(i, j) + epsilon)) - weightDecay * learningRate * params.getEntry(i, j)));
             }
         }
 
@@ -68,21 +80,21 @@ public class Adagrad implements Optimizer {
         if (!tensorParamsToPrevV.containsKey(params)) {
             Matrix3D[] empty = new Matrix3D[params.length];
             for (int i = 0; i < params.length; i++) {
-                empty[i] = new Matrix3D(kernel.length, kernel[0].length, kernel[0][0].length);
+                empty[i] = new Matrix3D(kernel.length, kernel[0].length, kernel[0][0].length, initValue);
             }
             tensorParamsToPrevV.put(params, empty);
         }
 
-        Matrix3D[] prevGradientsPow = tensorParamsToPrevV.get(params);
+        Matrix3D[] movingAverage = tensorParamsToPrevV.get(params);
 
-        //form sum of g^2
-        for (int i = 0; i < prevGradientsPow.length; i++) {
-            double[][][] prevGradPowMatrix = prevGradientsPow[i].getMatrix3d();
+        //form moving average
+        for (int i = 0; i < movingAverage.length; i++) {
+            double[][][] prevMovingAverage = movingAverage[i].getMatrix3d();
             double[][][] gradientsMatrix = gradients[i].getMatrix3d();
-            for (int j = 0; j < prevGradPowMatrix.length; j++) {
-                for (int k = 0; k < prevGradPowMatrix[0].length; k++) {
-                    for (int g = 0; g < prevGradPowMatrix[0][0].length; g++) {
-                        prevGradPowMatrix[j][k][g] += Math.pow(gradientsMatrix[j][k][g], 2);
+            for (int j = 0; j < prevMovingAverage.length; j++) {
+                for (int k = 0; k < prevMovingAverage[0].length; k++) {
+                    for (int g = 0; g < prevMovingAverage[0][0].length; g++) {
+                        prevMovingAverage[j][k][g] += gamma * prevMovingAverage[j][k][g] + (1 - gamma) * Math.pow(gradientsMatrix[j][k][g], 2);
                     }
                 }
             }
@@ -93,12 +105,12 @@ public class Adagrad implements Optimizer {
         //correct weights
         for (int i = 0; i < params.length; i++) {
             double[][][] paramsMatrix = params[i].getMatrix3d();
-            double[][][] prevGradPowMatrix = prevGradientsPow[i].getMatrix3d();
+            double[][][] prevMovingAverage = movingAverage[i].getMatrix3d();
             double[][][] gradientsMatrix = gradients[i].getMatrix3d();
             for (int j = 0; j < paramsMatrix.length; j++) {
                 for (int k = 0; k < paramsMatrix[0].length; k++) {
                     for (int g = 0; g < paramsMatrix[0][0].length; g++) {
-                        paramsMatrix[j][k][g] -= learningRate * gradientsMatrix[j][k][g] / (Math.sqrt(prevGradPowMatrix[j][k][g] + epsilon)) + weightDecay * learningRate * paramsMatrix[j][k][g];
+                        paramsMatrix[j][k][g] -= learningRate * gradientsMatrix[j][k][g] / (Math.sqrt(prevMovingAverage[j][k][g] + epsilon)) + weightDecay * learningRate * paramsMatrix[j][k][g];
                     }
                 }
             }
@@ -108,19 +120,21 @@ public class Adagrad implements Optimizer {
     @Override
     public void optimize(double[] params, double[] gradients) {
         if (!arrayParamsToPrevV.containsKey(params)) {
-            arrayParamsToPrevV.put(params, new double[params.length]);
+            double[] doubles = new double[params.length];
+            ArraysUtils.fillArray(doubles, initValue);
+            arrayParamsToPrevV.put(params, doubles);
         }
 
-        double[] prevGradientsPow = arrayParamsToPrevV.get(params);
+        double[] movingAverage = arrayParamsToPrevV.get(params);
 
         //form sum of g^2
         for (int i = 0; i < params.length; i++) {
-            prevGradientsPow[i] += Math.pow(gradients[i], 2);
+            movingAverage[i] += gamma * movingAverage[i] + (1 - gamma) * Math.pow(gradients[i], 2);
         }
 
         //correct weights
         for (int i = 0; i < params.length; i++) {
-            params[i] -= learningRate * gradients[i] / (Math.sqrt(prevGradientsPow[i] + epsilon)) + weightDecay * learningRate * params[i];
+            params[i] -= learningRate * gradients[i] / (Math.sqrt(movingAverage[i] + epsilon)) + weightDecay * learningRate * params[i];
         }
     }
 

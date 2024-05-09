@@ -8,12 +8,15 @@ public class GD implements Optimizer {
 
     private double learningRate;
 
+    private double weightDecay;
+
     public GD() {
-        this(0.001);
+        this(0.001, 0.0);
     }
 
-    public GD(double learningRate) {
+    public GD(double learningRate, double weightDecay) {
         this.learningRate = learningRate;
+        this.weightDecay = weightDecay;
     }
 
     @Override
@@ -21,7 +24,7 @@ public class GD implements Optimizer {
         //correct weights
         for (int i = 0; i < params.getRowDimension(); i++) {
             for (int j = 0; j < params.getColumnDimension(); j++) {
-                params.setEntry(i, j, (params.getEntry(i, j) - learningRate * gradients.getEntry(i, j)));
+                params.setEntry(i, j, (params.getEntry(i, j) - learningRate * gradients.getEntry(i, j) - weightDecay * learningRate * params.getEntry(i, j)));
             }
         }
 //        System.out.println("Весс " + params.getEntry(0, 0));
@@ -37,7 +40,7 @@ public class GD implements Optimizer {
             for (int j = 0; j < paramsMatrix.length; j++) {
                 for (int k = 0; k < paramsMatrix[0].length; k++) {
                     for (int g = 0; g < paramsMatrix[0][0].length; g++) {
-                        paramsMatrix[j][k][g] -= learningRate * gradientsMatrix[j][k][g];
+                        paramsMatrix[j][k][g] -= learningRate * gradientsMatrix[j][k][g] + weightDecay * learningRate * paramsMatrix[j][k][g];
                     }
                 }
             }
@@ -49,7 +52,7 @@ public class GD implements Optimizer {
     public void optimize(double[] params, double[] gradients) {
         //correct weights
         for (int i = 0; i < params.length; i++) {
-            params[i] -= learningRate * gradients[i];
+            params[i] -= learningRate * gradients[i] + weightDecay * learningRate * params[i];
         }
 
     }

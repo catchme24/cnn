@@ -2,6 +2,8 @@ package util.model;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 
 public class Matrix3D {
 
@@ -10,6 +12,12 @@ public class Matrix3D {
 
     @Getter
     private final int dimension;
+
+    public Matrix3D(int depth, int height, int width, double initValue) {
+        this.matrix3d = initMatrix(depth, height, width);
+        fillMatrix(matrix3d, initValue);
+        this.dimension = depth == 1 ? 2 : 3;
+    }
 
     public Matrix3D(int depth, int height, int width) {
         this.matrix3d = initMatrix(depth, height, width);
@@ -55,6 +63,16 @@ public class Matrix3D {
 
     private double[][][] initMatrix(int depth, int height, int width) {
         return new double[depth][height][width];
+    }
+
+    private void fillMatrix(double[][][] matrix3d, double initValue) {
+        for (int i = 0; i < matrix3d.length; i++) {
+            for (int j = 0; j < matrix3d[0].length; j++) {
+                for (int k = 0; k < matrix3d[0][0].length; k++) {
+                    matrix3d[i][j][k] = initValue;
+                }
+            }
+        }
     }
 
     public int getCountOfItems() {

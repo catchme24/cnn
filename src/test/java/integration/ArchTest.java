@@ -10,9 +10,7 @@ import function.initializer.HeInitializer;
 import network.TrainableNetwork;
 import network.builder.NetworkBuilder;
 import network.layer.*;
-import optimizer.Adagrad;
-import optimizer.GD;
-import optimizer.SGD;
+import optimizer.*;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.jupiter.api.Test;
 import util.MatrixUtils;
@@ -244,32 +242,32 @@ public class ArchTest {
         TrainableNetwork<Matrix3D, RealMatrix> network = NetworkBuilder.builder()
                 .append(new ConvolutionLayer(32, 3, 1,
                                             imageDimension,
-                                            new HeInitializer()))
+                                            new HeInitializer(16)))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new ConvolutionLayer(32, 3, 1,
-                                            new HeInitializer()))
+                                            new HeInitializer(16)))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new PoolingLayer(2, 2))
                 .append(new ConvolutionLayer(64, 3, 1,
-                                            new HeInitializer()))
+                                            new HeInitializer(16)))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new ConvolutionLayer(64, 3, 1,
-                                            new HeInitializer()))
+                                            new HeInitializer(16)))
                 .append(new Activation3DLayer(new ReLu()))
                 .append(new PoolingLayer(2, 2))
                 .append(new Flatten())
-                .append(new FullyConnected(512,new HeInitializer()))
+                .append(new FullyConnected(512,new HeInitializer(16)))
                 .append(new ActivationLayer(new ReLu()))
-                .append(new FullyConnected(10,new HeInitializer()))
+                .append(new FullyConnected(10,new HeInitializer(16)))
 //                .append(new ActivationLayer(new ReLu()))
                 .append(new ActivationLayer(new Softmax()))
                 .build();
 
-        network.setOptimizer(new Adagrad());
+        network.setOptimizer(new Adagrad(0.001, 0.0000001, 0.0005));
 //        network.setOptimizer(new GD(0.001));
 //        network.setErrorFunction(new LabelSmoothing(0.01));
 //        network.setErrorFunction(new LabelSmoothing(0.001));
-        network.train(10, dataset, true);
+        network.train(25, dataset, true);
         network.test(dataset);
     }
 

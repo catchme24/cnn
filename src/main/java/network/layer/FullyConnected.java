@@ -57,7 +57,7 @@ public class FullyConnected implements Layer2D, LearningLayer {
     @Override
     public void initWeightsAndBaises() {
         weights = MatrixUtils.createInstance(inputDimension.getHeightTens(), outputDimension.getHeightTens());
-        initializer.setParams(inputDimension.getHeightTens());
+        initializer.setParams(inputDimension.getHeightTens(), outputDimension.getHeightTens());
         initializer.initializeMutable(baises);
         initializer.initializeMutable(weights);
 //        MatrixUtils.fillHeNormal(baises, inputDimension.getHeightTens());

@@ -42,6 +42,8 @@ public class Softmax implements ActivationFunc {
 //            System.out.println(Math.exp(result.getEntry(i, 0)-max));
             result.setEntry(i, 0, Math.exp(result.getEntry(i, 0)) / summ);
         }
+//        System.out.println("----------");
+//        MatrixUtils.printMatrixTest(result);
         return result;
     }
 

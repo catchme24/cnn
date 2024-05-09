@@ -96,8 +96,10 @@ public class ConvolutionLayer implements Layer3D, LearningLayer {
 
     @Override
     public void initWeightsAndBaises() {
-        double countCoefficient = inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel();
-        initializer.setParams(countCoefficient);
+        double countInput = inputDimension.getWidthTens() * inputDimension.getHeightTens() * inputDimension.getChannel();
+        double countOutput = outputDimension.getWidthTens() * outputDimension.getHeightTens() * outputDimension.getChannel();
+
+        initializer.setParams(countInput, countOutput);
         for (int i = 0; i < outputDimension.getChannel(); i++) {
             Matrix3D kernel = new Matrix3D(this.inputDimension.getChannel(),
                                                 this.outputDimension.getHeightKernel(),
