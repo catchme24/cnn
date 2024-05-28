@@ -30,6 +30,7 @@ public class Softmax implements ActivationFunc {
 
     @Override
     public RealMatrix calculate(RealMatrix x) {
+//        System.out.println("----НАЧАЛО------");
 //        MatrixUtils.printMatrixTest(x);
         RealMatrix result = x.copy();
         double[] vector = x.getColumn(0);
@@ -42,7 +43,7 @@ public class Softmax implements ActivationFunc {
 //            System.out.println(Math.exp(result.getEntry(i, 0)-max));
             result.setEntry(i, 0, Math.exp(result.getEntry(i, 0)) / summ);
         }
-//        System.out.println("----------");
+//        System.out.println("----КОНЕЦ------");
 //        MatrixUtils.printMatrixTest(result);
         return result;
     }

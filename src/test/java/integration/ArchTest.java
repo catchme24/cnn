@@ -220,9 +220,9 @@ public class ArchTest {
 
 //        String loadPath = "D:\\network10epoch50000";
 
-        String trainPath = "D:\\cifar10_50\\train";
-        String validPath = "D:\\cifar10_50\\valid";
-        String testPath = "D:\\cifar10_50\\test";
+        String trainPath = "D:\\Обучение\\Самообучение\\Projects\\Java\\neuro-network\\cifar10_50\\train";
+        String validPath = "D:\\Обучение\\Самообучение\\Projects\\Java\\neuro-network\\cifar10_50\\valid";
+        String testPath = "D:\\Обучение\\Самообучение\\Projects\\Java\\neuro-network\\cifar10_50\\test";
 
         File train = new File(trainPath);
         File valid = new File(validPath);
@@ -263,12 +263,14 @@ public class ArchTest {
                 .append(new ActivationLayer(new Softmax()))
                 .build();
 
-        network.setOptimizer(new Adagrad(0.001, 0.0000001, 0.0005));
+//        network.setOptimizer(new GD(0.005, 0.0));
+        network.setOptimizer(new Adagrad());
 //        network.setOptimizer(new GD(0.001));
 //        network.setErrorFunction(new LabelSmoothing(0.01));
 //        network.setErrorFunction(new LabelSmoothing(0.001));
         network.train(25, dataset, true);
         network.test(dataset);
+
     }
 
     @Test
@@ -319,5 +321,29 @@ public class ArchTest {
         network.setErrorFunction(new LabelSmoothing(0.01));
         network.train(25, dataset, true);
         network.test(dataset);
+    }
+
+    @Test
+    public void testLoadMemory() throws IOException, InterruptedException {
+
+
+        Thread.sleep(5000);
+
+        String trainPath = "C:\\cifar10\\train";
+        String validPath = "C:\\cifar10\\valid";
+        String testPath = "C:\\cifar10\\test";
+
+        File train = new File(trainPath);
+        File valid = new File(validPath);
+        File test = new File(testPath);
+
+        MyDatasetParser myDatasetParser = new MyDatasetParser();
+
+        System.out.println("ПОЕХАЛА ГРУЗИТЬ");
+        DatasetHelperImpl<Matrix3D, RealMatrix> helper = new DatasetHelperImpl<>();
+        Dataset<Matrix3D, RealMatrix> dataset = helper.prepareDataset(train, valid, test, myDatasetParser);
+        System.out.println("ЗАКОНЧИЛА ГРУЗИТЬ");
+
+        Thread.sleep(10000);
     }
 }

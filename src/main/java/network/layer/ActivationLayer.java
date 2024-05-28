@@ -49,8 +49,7 @@ public class ActivationLayer implements Layer2D {
 
     @Override
     public RealMatrix propogateForward(RealMatrix inputVector) {
-        log.debug("ActivationLayer: Start propogateForward with:");
-        MatrixUtils.printMatrix(inputVector);
+
         if (inputVector.getColumnDimension() != 1) {
             throw new NetworkConfigException(   "Input vector has size: " + inputVector.getRowDimension() +
                     "x" + inputVector.getColumnDimension() +

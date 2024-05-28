@@ -1,4 +1,7 @@
 
+import data.Dataset;
+import data.DatasetHelperImpl;
+import data.parser.MyDatasetParser;
 import org.apache.commons.math3.linear.RealMatrix;
 import util.model.Matrix3D;
 import util.MatrixUtils;
@@ -13,40 +16,25 @@ import java.text.ParseException;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Thread.sleep(5000);
 
-        BufferedImage image = ImageIO.read(new File("D:\\0001.png"));
+        String trainPath = "C:\\cifar10\\train";
+        String validPath = "C:\\cifar10\\valid";
+        String testPath = "C:\\cifar10\\test";
 
-        int w = image.getWidth();
-        int h = image.getHeight();
+        File train = new File(trainPath);
+        File valid = new File(validPath);
+        File test = new File(testPath);
 
-        System.out.println(w + " " + h);
+        MyDatasetParser myDatasetParser = new MyDatasetParser();
 
-        int[] dataBuffInt = image.getRGB(0, 0, w, h, null, 0, w);
-        Color c = new Color(dataBuffInt[512 + 15]);
+        System.out.println("ПОЕХАЛА ГРУЗИТЬ");
+        DatasetHelperImpl<Matrix3D, RealMatrix> helper = new DatasetHelperImpl<>();
+        Dataset<Matrix3D, RealMatrix> dataset = helper.prepareDataset(train, valid, test, myDatasetParser);
+        System.out.println("ЗАКОНЧИЛА ГРУЗИТЬ");
 
-
-
-        System.out.println(c.getRed());   // = (dataBuffInt[100] >> 16) & 0xFF
-        System.out.println(c.getGreen()); // = (dataBuffInt[100] >> 8)  & 0xFF
-        System.out.println(c.getBlue());  // = (dataBuffInt[100] >> 0)  & 0xFF
-        System.out.println(c.getAlpha()); // = (
-
-        Matrix3D dataFrame = getDataFrame(image);
-        double[][][] dataFrameArray = dataFrame.getMatrix3d();
-
-        for (int i = 0; i < dataFrameArray.length; i++) {
-            System.out.println("-------------------------");
-            System.out.println("-------------------------");
-            System.out.println("-------------------------");
-            RealMatrix matrix = MatrixUtils.createInstance(dataFrameArray[i]);
-            MatrixUtils.printMatrixTest(matrix);
-        }
-
-        double weight = 0.0123121;
-        double x1 = 0.0;
-        double x2 = 0.1;
-        System.out.println(weight - x1 * x2);
+        Thread.sleep(10000);
     }
 
     public static Matrix3D getDataFrame(BufferedImage image) {

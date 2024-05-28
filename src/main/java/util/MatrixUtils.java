@@ -118,12 +118,12 @@ public class MatrixUtils {
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 Color c = new Color(dataBuffInt[i * w + j]);
-                red[i][j] =  c.getRed();
-                green[i][j] = c.getGreen();
-                blue[i][j] = c.getBlue();
-//                red[i][j] =  c.getRed() / 255.0;
-//                green[i][j] = c.getGreen() / 255.0;
-//                blue[i][j] = c.getBlue() / 255.0;
+//                red[i][j] =  c.getRed();
+//                green[i][j] = c.getGreen();
+//                blue[i][j] = c.getBlue();
+                red[i][j] =  c.getRed() / 255.0;
+                green[i][j] = c.getGreen() / 255.0;
+                blue[i][j] = c.getBlue() / 255.0;
             }
         }
         result.setMatrix2d(red, 0);
