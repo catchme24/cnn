@@ -124,6 +124,11 @@ public class AddConvolutionLayerWindowController {
                         .append(widthSizeValue);
             }
 
+            desc
+                .append(", инициализатор: ")
+                .append(selectedItem);
+
+
             if (sharedState.getNeedReplace()) {
                 sharedState.getModel().replace(sharedState.getReplaceIndex(), convolutionLayer);
                 sharedState.getDescriptionTable().getItems().remove(sharedState.getReplaceIndex());

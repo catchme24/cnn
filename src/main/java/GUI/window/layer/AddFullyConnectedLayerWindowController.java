@@ -91,6 +91,11 @@ public class AddFullyConnectedLayerWindowController {
                 desc.append(" размер входа: ")
                         .append(inputCount);
             }
+
+            desc
+                .append(", инициализатор: ")
+                .append(selectedItem);
+
             if (sharedState.getNeedReplace()) {
                 sharedState.getModel().replace(sharedState.getReplaceIndex(), fullyConnected);
                 sharedState.getDescriptionTable().getItems().remove(sharedState.getReplaceIndex());
