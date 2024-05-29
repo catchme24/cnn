@@ -20,6 +20,7 @@ public class MainWindow extends Application {
 
         MainWindowController controller = loader.getController();
         controller.init(stage);
+        stage.setTitle("Application");
 
         //set up main scene
         Scene scene = new Scene(panel);

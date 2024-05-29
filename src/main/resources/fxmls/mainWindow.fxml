@@ -54,7 +54,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="TOP_CENTER" prefHeight="488.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.window.MainWindowController">
+<VBox alignment="TOP_CENTER" prefHeight="629.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.window.MainWindowController">
   <children>
     <MenuBar maxHeight="30.0" minHeight="30.0" prefHeight="39.0" prefWidth="640.0" VBox.vgrow="NEVER">
       <menus>
@@ -68,23 +68,9 @@
             <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Редактирование">
+        <Menu mnemonicParsing="false" text="О программе">
           <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Помощь">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem fx:id="errorMenuItem" mnemonicParsing="false" text="About Application" />
           </items>
         </Menu>
       </menus>
@@ -180,11 +166,11 @@
                   </Tab>
                   <Tab text="Обучение">
                      <content>
-                        <SplitPane dividerPositions="0.9333022388059701" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                        <SplitPane dividerPositions="0.8027314112291349" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                           <items>
-                              <VBox prefHeight="258.0" prefWidth="640.0">
+                              <VBox prefHeight="414.0" prefWidth="640.0">
                                  <children>
-                                    <AnchorPane maxHeight="92.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="92.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+                                    <AnchorPane maxHeight="103.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="103.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <CheckBox fx:id="loggingFlag" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Логировать в файл" />
                                           <TextField fx:id="logFileField" layoutX="14.0" layoutY="81.0" prefHeight="26.0" prefWidth="213.0" />
@@ -194,19 +180,24 @@
                                        </children>
                                     </AnchorPane>
                                     <Separator prefHeight="6.0" prefWidth="640.0" />
-                                    <AnchorPane maxHeight="200.0" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="640.0" VBox.vgrow="SOMETIMES">
+                                    <AnchorPane maxHeight="496.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="189.0" prefWidth="640.0" VBox.vgrow="SOMETIMES">
                                        <children>
-                                          <StackPane layoutX="72.0" layoutY="140.0" nodeOrientation="RIGHT_TO_LEFT" />
-                                          <TextField fx:id="epochCountField" layoutX="129.0" layoutY="9.0" prefHeight="21.0" prefWidth="150.0" />
-                                          <Label layoutX="14.0" layoutY="13.0" prefHeight="18.0" prefWidth="68.0" text="Эпох:" />
-                                          <Label layoutX="16.0" layoutY="49.0" prefHeight="18.0" prefWidth="100.0" text="Оптимизатор:" />
-                                          <ChoiceBox fx:id="optimizersSelection" layoutX="129.0" layoutY="45.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="151.0" />
-                                          <CheckBox fx:id="labelSmoothingFlag" layoutX="16.0" layoutY="89.0" mnemonicParsing="false" text="Label Smoothing" />
-                                          <Button fx:id="trainButton" layoutX="16.0" layoutY="127.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" text="Обучить" />
-                                          <Button layoutX="129.0" layoutY="126.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="Пауза" />
-                                          <Button fx:id="testButton" layoutX="16.0" layoutY="166.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="214.0" text="Тестировать" />
-                                          <CheckBox fx:id="validationFlag" layoutX="139.0" layoutY="89.0" mnemonicParsing="false" text="Валидировать" />
-                                          <CheckBox fx:id="weightDecayFlag" layoutX="251.0" layoutY="89.0" mnemonicParsing="false" text="Weight decay" />
+                                          <Label layoutX="14.0" layoutY="21.0" prefHeight="18.0" prefWidth="100.0" text="Оптимизатор:" />
+                                          <ChoiceBox fx:id="optimizersSelection" layoutX="129.0" layoutY="17.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="151.0" />
+                                          <CheckBox fx:id="labelSmoothingFlag" layoutX="14.0" layoutY="61.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="118.0" text="Label Smoothing" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="20.0" />
+                                       </VBox.margin>
+                                    </AnchorPane>
+                                    <Separator prefHeight="6.0" prefWidth="640.0" />
+                                    <AnchorPane maxHeight="280.0" maxWidth="1.7976931348623157E308" prefHeight="54.0" prefWidth="640.0" VBox.vgrow="SOMETIMES">
+                                       <children>
+                                          <Button fx:id="trainButton" layoutX="16.0" layoutY="80.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="213.0" text="Обучить" />
+                                          <Button fx:id="testButton" layoutX="16.0" layoutY="127.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="214.0" text="Тестировать" />
+                                          <CheckBox fx:id="validationFlag" layoutX="16.0" layoutY="47.0" mnemonicParsing="false" text="Валидировать" />
+                                          <Label layoutX="14.0" layoutY="16.0" prefHeight="18.0" prefWidth="68.0" text="Эпох:" />
+                                          <TextField fx:id="epochCountField" layoutX="129.0" layoutY="12.0" prefHeight="21.0" prefWidth="150.0" />
                                        </children>
                                        <padding>
                                           <Insets bottom="40.0" />
@@ -214,7 +205,7 @@
                                     </AnchorPane>
                                  </children>
                               </VBox>
-                              <TextFlow prefHeight="107.0" prefWidth="640.0" />
+                              <TextFlow prefHeight="0.0" prefWidth="640.0" />
                           </items>
                         </SplitPane>
                      </content>

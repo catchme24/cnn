@@ -111,6 +111,9 @@ public class MainWindowController {
     @FXML
     private AnchorPane tabData;
 
+    @FXML
+    private MenuItem errorMenuItem;
+
 
     //Модель данных
     private SharedState sharedState;
@@ -138,7 +141,10 @@ public class MainWindowController {
 
         mainStackPane.setDisable(true);
 
+        layersSelection.getItems().clear();
         layersSelection.getItems().addAll(layersNames);
+        layersSelection.getSelectionModel().select(0);
+        optimizersSelection.getItems().clear();
         optimizersSelection.getItems().addAll(optimizersNames);
 
         loggingFlag.setOnAction(e -> {
@@ -228,21 +234,21 @@ public class MainWindowController {
         });
 
         importNetwork.setOnAction(e -> {
-            FileBrowser fileBrowser = null;
-            try {
-                fileBrowser = new FileBrowser(sharedState);
-                fileBrowser.setOnCloseHandler(e2 -> {
-                    sharedState.setLoadPath(sharedState.getCurrentPath());
-                    if (sharedState.getLoadPath() != null) {
-                        mainStackPane.setDisable(false);
-                        testButton.setDisable(false);
-                    }
-                });
-                fileBrowser.init();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            fileBrowser.display(mainWindow);
+                FileBrowser fileBrowser = null;
+                try {
+                    fileBrowser = new FileBrowser(sharedState);
+                    fileBrowser.setOnCloseHandler(e2 -> {
+                        sharedState.setLoadPath(sharedState.getCurrentPath());
+                        if (sharedState.getLoadPath() != null) {
+                            mainStackPane.setDisable(false);
+                            testButton.setDisable(false);
+                        }
+                    });
+                    fileBrowser.init();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                fileBrowser.display(mainWindow);
         });
 
         exportNetwork.setOnAction(e -> {
@@ -390,6 +396,24 @@ public class MainWindowController {
                 testButton.setDisable(false);
             }).start();
 
+        });
+
+        errorMenuItem.setOnAction(e -> {
+            ErrorWindow errorWindow = null;
+            try {
+                errorWindow = new ErrorWindow(sharedState);
+                errorWindow.setOnCloseHandler(e2 -> {
+                    sharedState.setLoadPath(sharedState.getCurrentPath());
+                    if (sharedState.getLoadPath() != null) {
+                        mainStackPane.setDisable(false);
+                        testButton.setDisable(false);
+                    }
+                });
+                errorWindow.init();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            errorWindow.display(mainWindow);
         });
     }
 

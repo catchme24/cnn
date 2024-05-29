@@ -39,9 +39,9 @@ public class AddGdWindowController {
         });
 
         cancelButton.setOnAction(e -> {
-            if (sharedState.getModel().getOptimizer() == null) {
-                sharedState.getOptimizersSelection().getSelectionModel().clearSelection();
-            }
+//            if (sharedState.getModel().getOptimizer() == null) {
+//                sharedState.getOptimizersSelection().getSelectionModel().clearSelection();
+//            }
             currentWindow.close();
         });
     }
